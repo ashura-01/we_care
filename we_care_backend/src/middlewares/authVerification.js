@@ -1,23 +1,30 @@
-
 const { DecodeToken } = require("../utility/tokenHelper");
 
-module.exports = (req, res, next) => {
-    // 1. Skip check for OPTIONS (CORS Preflight)
+module.exports = () => {
+  return (req, res, next) => {
     if (req.method === "OPTIONS") return next();
 
-    let authHeader = req.headers.authorization || "";
-    let token = authHeader.replace("Bearer ", "").trim() || req.cookies['token'];
-
-    if (!token || token === "null" || token === "undefined") {
-        return res.status(401).json({ success: false, message: "No token provided" });
+    let token = req.headers.authorization;
+    if (token && token.startsWith("Bearer ")) {
+      token = token.split(" ")[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
     }
 
-    let decoded = DecodeToken(token);
+    if (!token) {
+      return res.status(401).json({ success: false, message: "No token provided" });
+    }
+
+    const decoded = DecodeToken(token);
     if (!decoded) {
-        return res.status(401).json({ success: false, message: "Invalid token" });
+      return res.status(401).json({ success: false, message: "Invalid token" });
     }
 
-    req.headers.email = decoded.email;
-    req.headers._id = decoded._id;
+    req.user = {
+      _id: decoded._id,
+      email: decoded.email,
+    };
+
     next();
+  };
 };

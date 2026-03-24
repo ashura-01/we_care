@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const DataSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     email: {
       type: String,
       required: true,
@@ -10,14 +15,13 @@ const DataSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
+    phone: {
       type: String,
       required: true,
     },
-    role: {
+    password: {
       type: String,
-      enum: ["patient", "doctor"],
-      default: "patient",
+      required: true,
     },
   },
   {
@@ -26,17 +30,14 @@ const DataSchema = new mongoose.Schema(
   }
 );
 
-// Hash password before saving
-DataSchema.pre("save", async function () {
+UserSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
 
-// Compare password
-DataSchema.methods.comparePassword = async function (password) {
+UserSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);
 };
 
-const userModel = mongoose.model("users", DataSchema);
-module.exports = userModel;
+module.exports = mongoose.model("users", UserSchema);

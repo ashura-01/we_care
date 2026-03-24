@@ -1,109 +1,316 @@
 const userModel = require("../models/userModel");
+const doctorModel = require("../models/doctorModel");
 const { EncodeToken } = require("../utility/tokenHelper");
 
-// REGISTER USER
+// ----------------- REGISTER PATIENT -----------------
 exports.register = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ success: false, message: "Email and password required" });
+    const { name, email, phone, password } = req.body;
 
-    const existing = await userModel.findOne({ email });
-    if (existing)
-      return res.status(400).json({ success: false, message: "Email already exists" });
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
 
-    const user = await userModel.create({ email, password, role });
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
+
+    const user = await userModel.create({
+      name,
+      email,
+      phone,
+      password,
+    });
+
+    const token = EncodeToken(user.email, user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.status(201).json({
       success: true,
-      message: "User created successfully",
-      user: { id: user._id, email: user.email, role: user.role },
+      message: "Registration successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      },
+      token,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Registration failed", error: error.toString() });
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+      error: error.message,
+    });
   }
 };
 
-// LOGIN USER
+// ----------------- REGISTER DOCTOR -----------------
+exports.registerDoctor = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      password,
+      specialization,
+      experience,
+      hospital,
+      fees,
+    } = req.body;
+
+    if (
+      !name ||
+      !email ||
+      !phone ||
+      !password ||
+      !specialization ||
+      !experience ||
+      !hospital ||
+      !fees
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
+
+    // Create user
+    const user = await userModel.create({
+      name,
+      email,
+      phone,
+      password,
+    });
+
+    // Create doctor profile
+    const doctor = await doctorModel.create({
+      userId: user._id,
+      specialization,
+      experience: Number(experience),
+      hospital,
+      fees: Number(fees),
+    });
+
+    const token = EncodeToken(user.email, user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Doctor registered successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      },
+      doctor,
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Doctor registration failed",
+      error: error.message,
+    });
+  }
+};
+
+// ----------------- LOGIN -----------------
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
-      return res.status(400).json({ success: false, message: "Email and password required" });
 
-    const user = await userModel.findOne({ email });
-    if (!user)
-      return res.status(401).json({ success: false, message: "Email not found" });
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch)
-      return res.status(401).json({ success: false, message: "Password incorrect" });
-
-    const token = EncodeToken(user.email, user._id, user.role);
-
-    res.cookie("token", token, {
-      maxAge: 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "lax",
-      secure: false,
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token,
-      user: { id: user._id, email: user.email, role: user.role },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Login failed", error: error.toString() });
-  }
-};
-
-// LOGOUT USER
-exports.logout = (req, res) => {
-  try {
-    res.clearCookie("token");
-    res.status(200).json({ success: true, message: "Logout successful" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Logout failed", error: error.toString() });
-  }
-};
-
-// GET USER BY ID (requires auth middleware to set req.user)
-exports.user = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const user = await userModel.findById(userId).select("-password");
-    if (!user)
-      return res.status(404).json({ success: false, message: "User not found" });
-
-    res.status(200).json({ success: true, result: user });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Fetching user failed", error: error.toString() });
-  }
-};
-
-// UPDATE USER
-exports.update = async (req, res) => {
-  try {
-    const { email, password, role } = req.body;
-    const userId = req.user._id;
-
-    const updatedData = { email, role };
-
-    if (password) {
-      const bcrypt = require("bcrypt");
-      updatedData.password = await bcrypt.hash(password, 10);
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
     }
 
-    const user = await userModel.findByIdAndUpdate(userId, updatedData, { new: true });
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
 
-    res.status(200).json({
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const token = EncodeToken(user.email, user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // Check if user is doctor
+    const doctor = await doctorModel.findOne({ userId: user._id });
+
+    res.json({
       success: true,
-      message: "User data updated",
-      user: { id: user._id, email: user.email, role: user.role },
+      message: "Login successful",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        isDoctor: doctor ? true : false,
+      },
+      doctor: doctor || null,
+      token,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Update failed", error: error.toString() });
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+      error: error.message,
+    });
+  }
+};
+
+// ----------------- LOGOUT -----------------
+exports.logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Logout failed",
+      error: error.message,
+    });
+  }
+};
+
+// ----------------- GET PROFILE -----------------
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const doctor = await doctorModel.findOne({ userId: user._id });
+
+    res.json({
+      success: true,
+      user,
+      doctor: doctor || null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch profile",
+      error: error.message,
+    });
+  }
+};
+
+// ----------------- UPDATE PROFILE -----------------
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
+
+    const user = await userModel
+      .findByIdAndUpdate(req.user._id, updateData, { new: true, runValidators: true })
+      .select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Update failed",
+      error: error.message,
+    });
+  }
+};
+
+// ----------------- DELETE ACCOUNT -----------------
+exports.deleteAccount = async (req, res) => {
+  try {
+    // Delete doctor profile if exists
+    await doctorModel.findOneAndDelete({ userId: req.user._id });
+
+    // Delete user
+    const user = await userModel.findByIdAndDelete(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.clearCookie("token");
+    res.json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Account deletion failed",
+      error: error.message,
+    });
   }
 };
