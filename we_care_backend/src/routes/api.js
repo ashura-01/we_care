@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const doctorController = require("../controllers/doctorController");
 const auth = require("../middlewares/authVerification");
+const reviewController = require("../controllers/reviewController");
 
 // Test route
 router.get("/", (req, res) => {
@@ -28,5 +29,9 @@ router.delete("/account", auth(), userController.deleteAccount);
 
 // --------- DOCTOR ONLY ROUTES -----------
 router.put("/doctor-profile", auth(), doctorController.updateDoctorProfile);
+
+// --------- REVIEW ROUTES ---------------------
+router.get("/reviews/:doctorId", reviewController.getDoctorReviews);
+router.post("/reviews/:doctorId", reviewController.createReview);
 
 module.exports = router;
