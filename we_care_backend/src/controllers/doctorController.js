@@ -1,5 +1,5 @@
 const doctorModel = require("../models/doctorModel");
-
+const mongoose = require("mongoose");
 // ----------------- GET ALL DOCTORS WITH FILTERS & PAGINATION -----------------
 exports.getAllDoctors = async (req, res) => {
   try {
@@ -116,24 +116,74 @@ exports.getAllDoctors = async (req, res) => {
   }
 };
 
-// -------- GET SINGLE DOCTOR -----------------
+// -------- GET SINGLE DOCTOR (WITH REVIEWS) -----------------
 exports.getDoctorById = async (req, res) => {
   try {
-    const doctor = await doctorModel
-      .findById(req.params.id)
-      .populate("userId", "name email phone");
+    const { id } = req.params;
 
-    if (!doctor) {
+    // Convert string ID to MongoDB ObjectId for the aggregation match stage
+    const doctorId = new mongoose.Types.ObjectId(id);
+
+    const pipeline = [
+      // 1. Find the specific doctor by their ID
+      {
+        $match: { _id: doctorId }
+      },
+      // 2. Join the User collection to get the doctor's name, email, etc.
+      {
+        $lookup: {
+          from: "users",          // The name of the users collection
+          localField: "userId",   // The field in the doctors collection
+          foreignField: "_id",    // The matching field in the users collection
+          as: "user"
+        }
+      },
+      // 3. Unwind the user array so it's a single object
+      {
+        $unwind: "$user"
+      },
+      // 4. Join the Reviews collection to get all reviews for this doctor
+      {
+        $lookup: {
+          from: "reviews",        // Must match exactly your review collection name
+          localField: "_id",      // The doctor's ID
+          foreignField: "doctorId",// The field in the reviews collection linking back
+          as: "reviews"           // The name of the new array holding the reviews
+        }
+      },
+      // 5. Project (format) the final output structure
+      {
+        $project: {
+          _id: 1,
+          specialization: 1,
+          experience: 1,
+          hospital: 1,
+          fees: 1,
+          verified: 1,
+          "user._id": 1,
+          "user.name": 1,
+          "user.email": 1,
+          "user.phone": 1,
+          reviews: 1 // Include the full array of reviews
+        }
+      }
+    ];
+
+    const result = await doctorModel.aggregate(pipeline);
+
+    if (!result || result.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Doctor not found",
       });
     }
 
+    // result is an array, so we send the first (and only) object
     res.json({
       success: true,
-      doctor,
+      doctor: result[0],
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
