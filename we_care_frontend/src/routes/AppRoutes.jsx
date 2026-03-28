@@ -1,34 +1,73 @@
-import { Routes, Route } from "react-router-dom";
-
+// routes/AppRoutes.js
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Doctors from "../pages/Doctors";
 import Symptoms from "../pages/Symptoms";
 import Hospitals from "../pages/Hospitals";
-
-import LoginRoutes from "./LoginRoutes";
 import AdminRoutes from "./AdminRoutes";
-
-// 1. Import your new signup pages
 import SignupChoice from "../pages/SignupChoice";
 import PatientSignup from "../pages/PatientSignup";
 import DoctorSignup from "../pages/DoctorSignup";
+import Login from "../pages/Login"; // Import your actual login component
+import { ProtectedRoute } from "./ProtectedRoutes";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/doctors" element={<Doctors />} />
-      <Route path="/symptoms" element={<Symptoms />} />
-      <Route path="/hospitals" element={<Hospitals />} />
-
-      <Route path="/login/*" element={<LoginRoutes />} />
+      <Route path="/login" element={
+        <ProtectedRoute redirectIfAuthenticated={true}>
+          <Login />
+        </ProtectedRoute>
+      } />
       
-      {/* 2. Add the new Signup Routes right here */}
-      <Route path="/signup" element={<SignupChoice />} />
-      <Route path="/signup/patient" element={<PatientSignup />} />
-      <Route path="/signup/doctor" element={<DoctorSignup />} />
+      <Route path="/signup" element={
+        <ProtectedRoute redirectIfAuthenticated={true}>
+          <SignupChoice />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/signup/patient" element={
+        <ProtectedRoute redirectIfAuthenticated={true}>
+          <PatientSignup />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/signup/doctor" element={
+        <ProtectedRoute redirectIfAuthenticated={true}>
+          <DoctorSignup />
+        </ProtectedRoute>
+      } />
+      
+      {/* Protected routes */}
+      <Route path="/" element={
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/doctors" element={
+        <ProtectedRoute>
+          <Doctors />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/symptoms" element={
+        <ProtectedRoute>
+          <Symptoms />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/hospitals" element={
+        <ProtectedRoute>
+          <Hospitals />
+        </ProtectedRoute>
+      } />
 
-      <Route path="/admin/*" element={<AdminRoutes />} />
+      <Route path="/admin/*" element={
+        <ProtectedRoute>
+          <AdminRoutes />
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 };
