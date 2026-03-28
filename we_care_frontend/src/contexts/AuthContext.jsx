@@ -1,62 +1,92 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import axiosInstance from '../utils/axiosInstance'; // We need Axios to ask the backend
+import { createContext, useContext, useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
+
+export const useAuthContext = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  
-  // NEW: We need a loading state so the app doesn't flash the login screen 
-  // before the backend has a chance to answer!
-  const [loading, setLoading] = useState(true); 
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkLoggedInUser = async () => {
+    const fetchProfile = async () => {
       try {
-        // Hitting your existing, protected /profile route!
-        const response = await axiosInstance.get('/profile'); 
-        
-        if (response.data.success) {
-          // Merge the data so the NavBar knows if they are a doctor
-          const userData = {
-             ...response.data.user,
-             isDoctor: response.data.doctor ? true : false,
-             doctorInfo: response.data.doctor 
-          };
-          
-          setUser(userData); 
+        setLoading(true);
+        const response = await axiosInstance.get("/users/profile");
+        const { data } = response;
+        setUser(data);
+      } catch (err) {
+        if (err.response) {
+          setUser(null);
+          navigate("/login");
+        } else {
+          toast.error("Something went wrong");
         }
-      } catch (error) {
-        console.log("No active session found.");
-        setUser(null);
       } finally {
         setLoading(false);
       }
     };
+    fetchProfile();
+  }, []);
 
-    checkLoggedInUser();
-    }, []); // The empty array means this only runs ONCE when the app first loads/refreshes
+  const handleError = (err) => {
+    if (err.response) {
+      toast.error(err.response.data.error);
+      if (err.response.status === 401) {
+        setUser(null);
+        navigate("/login");
+      }
+    } else {
+      toast.error("Something went wrong");
+    }
+  };
 
-  const login = (userData) => {
-    setUser(userData);
+  const login = async (username, password) => {
+    try {
+      const response = await axiosInstance.post("/auth/login", {
+        username,
+        password,
+      });
+      const { data } = response;
+      setUser(data);
+      toast.success("Login successful");
+    } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
+    }
   };
 
   const logout = async () => {
+    setUser(null);
     try {
-      // Changed from .post to .get to match your api.js!
-      await axiosInstance.get('/logout'); 
+      const response = await axiosInstance.post("/auth/logout", {});
+      const { data } = response;
+      toast.success(data.message);
       setUser(null);
-    } catch (error) {
-      console.error("Logout failed:", error);
+      navigate("/login");
+    } catch (err) {
+      if (err.response) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {/* We wait to render the app until the check is finished */}
-      {!loading ? children : <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#1d5f71', fontSize: '24px', fontWeight: 'bold' }}>Loading WeCare...</div>}
+    <AuthContext.Provider
+      value={{ user, loading, login, logout, setUser, handleError }}
+    >
+      {loading ? null : children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

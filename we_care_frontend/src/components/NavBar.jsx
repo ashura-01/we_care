@@ -1,98 +1,46 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext"; // Bring in context
+import { Link } from "react-router-dom";
+import logo from "../assets/logo.jpg";
 
-const NavBar = ({ onOpenChat }) => {
-  const { user, logout } = useAuth(); // Check if logged in
-  const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  // Add 'async' here
-  const handleLogout = async () => { 
-    // Add 'await' here so it waits for the cookie to be cleared
-    await logout(); 
-    setIsDropdownOpen(false);
-    navigate("/login");
-  };
-
+const NavBar = () => {
   return (
-    <nav className="navbar-custom">
-      {/* LEFT: Logo */}
-      <Link to="/" className="navbar-logo">
-        <span className="leaf-icon">🌿</span>
-        <span className="logo-text">WeCare</span>
+    <nav className="flex w-full items-center justify-between px-[36px] py-[14px] gap-[20px] box-border">
+      
+      <Link to="/" className="flex items-center shrink-0 no-underline text-inherit gap-[6px]">
+        <img src={logo} alt="WeCare Logo" className="h-[48px] w-auto" />
+        <span className="text-[28px] font-bold text-[#2C6975]">WeCare</span>
       </Link>
 
-      {/* CENTER: Links */}
-      <div className="navbar-links">
-        {/* Changed from Link to a clickable span to open the sidebar! */}
-        <span className="nav-link-custom" onClick={onOpenChat} style={{ cursor: 'pointer' }}>
+      
+      <div className="flex flex-1 items-end justify-end gap-[24px] mx-[40px]">
+        <Link 
+          className="no-underline text-[#2C6975] text-[16px] font-black whitespace-nowrap transition-all duration-200 hover:text-[#1f4655]" 
+          to="/symptoms"
+        >
           Symptoms
-        </span>
-        
-        <Link to="/doctors" className="nav-link-custom">Doctors</Link>
-        <Link to="/ratings" className="nav-link-custom">Ratings</Link>
-        <Link to="/hospitals" className="nav-link-custom">Hospitals</Link>
+        </Link>
+        <Link 
+          className="no-underline text-[#2C6975] text-[16px] font-black whitespace-nowrap transition-all duration-200 hover:text-[#1f4655]" 
+          to="/doctors"
+        >
+          Doctors
+        </Link>
+        <Link 
+          className="no-underline text-[#2C6975] text-[16px] font-black whitespace-nowrap transition-all duration-200 hover:text-[#1f4655]" 
+          to="/hospitals"
+        >
+          Hospitals
+        </Link>
       </div>
 
-      {/* RIGHT: Conditional Rendering based on Auth state */}
-      <div style={{ position: "relative" }}>
-        {!user ? (
-          <Link to="/login" className="login-button">
-            Login / Signup
-          </Link>
-        ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            <div style={{ fontWeight: "bold", color: "#1d5f71", fontSize: "16px" }}>
-              Hi, {user.name.split(" ")[0]} {/* Shows first name only */}
-            </div>
-            {/* Simple down arrow icon */}
-            <span style={{ fontSize: "12px", color: "#1d5f71" }}>▼</span>
-
-            {/* The Dropdown Curtain (Glassmorphism style) */}
-            {isDropdownOpen && (
-              <div style={dropdownStyle}>
-                <Link to="/profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>Profile</Link>
-                <Link to="/settings" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>Settings</Link>
-                <hr style={{ borderTop: "1px solid rgba(0,0,0,0.1)", margin: "5px 0" }} />
-                <div style={{ ...dropdownItemStyle, color: "#d9534f" }} onClick={handleLogout}>
-                  Logout
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      
+      <Link 
+        className="no-underline bg-gradient-to-r from-[#68B2A0] to-[#cdfa91] bg-[length:200%_100%] text-white border border-white px-[35px] py-[3px] rounded-[10px] text-[16px] font-bold shadow-[0_6px_12px_rgba(0,0,0,0.3)] shrink-0 whitespace-nowrap transition-all duration-300 ease-in-out hover:bg-right hover:text-[#2C6975]" 
+        to="/login"
+      >
+        Login / Signup
+      </Link>
     </nav>
   );
-};
-
-// CSS in JS to keep the dropdown styled like the rest of the app
-const dropdownStyle = {
-  position: "absolute",
-  top: "40px",
-  right: "0",
-  width: "150px",
-  background: "rgba(255, 255, 255, 0.7)",
-  backdropFilter: "blur(10px)",
-  border: "1px solid rgba(255, 255, 255, 0.8)",
-  borderRadius: "15px",
-  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-  display: "flex",
-  flexDirection: "column",
-  padding: "10px",
-  zIndex: 100,
-};
-
-const dropdownItemStyle = {
-  padding: "8px 12px",
-  textDecoration: "none",
-  color: "#1d5f71",
-  fontWeight: "bold",
-  fontSize: "14px",
-  borderRadius: "8px",
-  transition: "background 0.2s",
-  cursor: "pointer",
 };
 
 export default NavBar;

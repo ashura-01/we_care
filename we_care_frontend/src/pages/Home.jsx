@@ -1,246 +1,203 @@
-import "../styles/home.css";
-import "../styles/glass.css";
-import { useOutletContext } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import LeafDecor from "../components/LeafDecor";
+import { getStats } from "../services/statsService";
+
+
+import doctorIcon from "../assets/doctor.svg";
+import aiIcon from "../assets/ai.svg";
+import hospitalIcon from "../assets/hospital.svg";
+import mainDoctorsIcon from "../assets/mainDoctor.png";
+
+
+import GlassCard from "../components/GlassCard";
+import PillButton from "../components/PillButton";
 
 const Home = () => {
+  const [stats, setStats] = useState([]);
 
-  const { openChat } = useOutletContext();
+  useEffect(() => {
+    const loadStats = async () => {
+      const data = await getStats();
+      setStats(data || []);
+    };
+    loadStats();
+  }, []);
 
   return (
     <>
-      <section className="hero-section">
-        <div className="bg-shape glow-top-left"></div>
-        <div className="bg-shape glow-right-green"></div>
-        <div className="bg-shape blur-center-blue"></div>
-        <div className="bg-shape blur-right-blue"></div>
-        <div className="bg-shape glow-center-green"></div>
-        <div className="bg-shape blur-center-blue2"></div>
-        <div className="bg-shape blur-center-blue3"></div>
+      <section className="relative overflow-hidden bg-white pb-[40px]">
+        
+        <div className="pointer-events-none absolute left-[-20px] top-[15px] z-[1] h-[150px] w-[150px] rounded-full bg-[#94d82d] opacity-[0.92] blur-[28px]" />
+        <div className="pointer-events-none absolute right-[-35px] top-[40px] z-[1] h-[150px] w-[150px] rounded-full bg-[#8fd629] opacity-[0.88] blur-[35px]" />
+        <div className="pointer-events-none absolute left-[85px] top-[300px] z-[1] h-[150px] w-[300px] rounded-[50px] bg-[#4f93a7] opacity-[0.75] blur-[18px]" />
+        <div className="pointer-events-none absolute right-[5px] top-[190px] z-[1] h-[300px] w-[150px] rounded-[50px] bg-[#5a99ac] opacity-[0.72] blur-[18px]" />
+        <div className="pointer-events-none absolute left-[450px] top-[245px] z-[1] h-[160px] w-[200px] rounded-full bg-[#8fda28] opacity-[0.92] blur-[38px]" />
+        <div className="pointer-events-none absolute right-1/2 top-[150px] z-[1] h-[250px] w-[130px] rounded-[70px] bg-[#5a99ac] opacity-[0.68] blur-[18px]" />
+        <div className="pointer-events-none absolute right-[35%] top-[25px] z-[1] h-[100px] w-[350px] rounded-[70px] bg-[#5a99ac] opacity-[0.68] blur-[18px]" />
+        <div className="absolute left-0 top-0 z-[2] h-full w-full bg-white/[0.02] backdrop-blur-[18px]" />
 
-        <div className="hero-glass-background"></div>
-
-        <div className="hero-content">
-          <div className="hero-top-row">
-            <div className="hero-left-column">
-              <div className="glass-card hero-glass-card">
-                <h1 className="hero-title">
-                  <span className="line-1">Right doctor.</span>
-                  <span className="line-2">Right place.</span>
-                  <span className="line-3">Right care.</span>
-                </h1>
-              </div>
-
-              <div className="hero-copy-block">
-                <p className="hero-description">
-                  Smart symptom insights with trusted doctors, locations, and
-                  appointment details.
-                </p>
-
-                <button className="hero-button" onClick={openChat}>CHECK SYMPTOMS</button>
-              </div>
-            </div>
-
-            <div className="hero-image-oval">
-              <div className="hero-image-inner">
-                <span className="hero-image-text">Image</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="hero-small-cards">
-            <div className="glass-card small-glass-card">
-              <h2>10,000+</h2>
-              <p>Doctors</p>
-            </div>
-
-            <div className="glass-card small-glass-card">
-              <h2>2,000+</h2>
-              <p>Hospitals</p>
-            </div>
-
-            <div className="glass-card small-glass-card">
-              <h2>8</h2>
-              <p>Divisions</p>
-            </div>
-          </div>
-
-          <p className="hero-bottom-note">Your path to the right care...</p>
-        </div>
-      </section>
-
-
-      <section className="path-section">
-        <div className="path-image-placeholder">
-          <span>Image</span>
-        </div>
-
-        <div className="path-card-wrapper">
-          <div className="path-leaf-top">
-            <LeafDecor />
-          </div>
-
-          <div className="path-leaf-bottom">
-            <LeafDecor />
-          </div>
-
-          <div className="path-glass-card">
-            <h2 className="path-title">Find Hospitals Near You</h2>
-
-            <p className="path-text">
-              Browse doctors by specialty and location. Click below to find the right one for you.
-            </p>
-
-            <button className="path-button">Browse Doctors</button>
-          </div>
-        </div>
-      </section>
-
-      
-      <section className="path-section path-section-reverse">
-        <div className="path-image-placeholder">
-          <span>Image</span>
-        </div>
-
-        <div className="path-card-wrapper">
-          <div className="path-leaf-top">
-            <LeafDecor />
-          </div>
-
-          <div className="path-leaf-bottom">
-            <LeafDecor />
-          </div>
-
-          <div className="path-glass-card">
-            <h2 className="path-title">Not Sure Where to Start?</h2>
-
-            <p className="path-text">
-              Enter your symptoms and we’ll guide you to the right specialist.
-            </p>
-
-            <button className="path-button">Get Guidance</button>
-          </div>
-        </div>
-      </section>
-
-      
-      <section className="path-section">
-        <div className="path-image-placeholder">
-          <span>Image</span>
-        </div>
-
-        <div className="path-card-wrapper">
-          <div className="path-leaf-top">
-            <LeafDecor />
-          </div>
-
-          <div className="path-leaf-bottom">
-            <LeafDecor />
-          </div>
-
-          <div className="path-glass-card">
-            <h2 className="path-title">Care, Close to You</h2>
-
-            <p className="path-text">
-              Find hospitals and diagnostic centers around you with ease.
-            </p>
-
-            <button className="path-button">Learn More</button>
-          </div>
-        </div>
-      </section>
-            <section className="why-section">
-        <div className="why-bg-orb why-bg-orb-1"></div>
-        <div className="why-bg-orb why-bg-orb-2"></div>
-
-        <h2 className="why-title">Why Choose WeCare</h2>
-
-        <div className="why-cards">
-          <div className="glass-card why-card">
-            <div className="why-icon">✓</div>
-            <h3>Verified Doctors</h3>
-            <p>
-              Connect with trusted professionals through clear profiles and reliable
-              healthcare information.
-            </p>
-          </div>
-
-          <div className="glass-card why-card">
-            <div className="why-icon">+</div>
-            <h3>Easy Access</h3>
-            <p>
-              Search symptoms, compare options, and move through care choices with a
-              simple experience.
-            </p>
-          </div>
-
-          <div className="glass-card why-card">
-            <div className="why-icon">★</div>
-            <h3>Confident Decisions</h3>
-            <p>
-              Explore doctors, locations, and support tools that help you choose the
-              right path.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="cta-section">
-        <div className="cta-bg-orb cta-bg-orb-1"></div>
-        <div className="cta-bg-orb cta-bg-orb-2"></div>
-
-        <div className="glass-card cta-card">
-          <p className="cta-tag">Start your care journey</p>
-          <h2 className="cta-title">Find clarity, comfort, and the care you deserve.</h2>
-          <p className="cta-text">
-            Explore symptoms, discover doctors, and take the next step with confidence.
-          </p>
-          <button className="cta-button">Get Started</button>
-        </div>
-      </section>
-      <section className="about-section">
-        <div className="about-grid">
-
-          <div className="about-block">
-            <h3>WeCare</h3>
-            <p>Your trusted platform for finding doctors, exploring care options, and booking appointments with ease.</p>
-          </div>
-
-          <div className="about-block">
-            <h4>Quick Links</h4>
-            <ul>
-              <li>Symptoms</li>
-              <li>Doctors</li>
-              <li>Hospitals</li>
+        <div className="relative z-[3] box-border px-[clamp(16px,3vw,34px)] pt-[38px]">
+          <div className="flex w-full items-start justify-start gap-[clamp(40px,16vw,260px)] max-[900px]:gap-[28px] max-[760px]:flex-col max-[760px]:items-start max-[760px]:gap-[20px]">
+            <div className="ml-[clamp(8px,2.5vw,40px)] flex min-w-0 flex-[0_1_690px] flex-col max-[900px]:ml-[clamp(4px,1.5vw,16px)] max-[760px]:ml-0 max-[760px]:w-full">
               
-            </ul>
+              
+              <GlassCard className="left-[clamp(20px,8vw,150px)] w-[clamp(360px,52vw,640px)] max-w-full rounded-[clamp(26px,3vw,42px)] px-[clamp(18px,2.2vw,30px)] py-[clamp(20px,2.4vw,34px)] max-[1200px]:w-[clamp(500px,58vw,640px)] max-[1100px]:left-[clamp(12px,5vw,90px)] max-[1100px]:w-[clamp(340px,50vw,560px)] max-[900px]:left-[clamp(8px,3vw,40px)] max-[900px]:w-[clamp(320px,56vw,500px)] max-[760px]:left-0 max-[760px]:w-full">
+                <h1 className="relative z-[4] m-0 text-[34px] font-bold leading-[1.45]">
+                  <span className="ml-[18px] block text-[#00887f] max-[760px]:ml-0">Right doctor.</span>
+                  <span className="ml-[116px] block text-[#0a6678] max-[1100px]:ml-[clamp(20px,5vw,80px)] max-[900px]:ml-[clamp(14px,4vw,48px)] max-[760px]:ml-0">Right place.</span>
+                  <span className="ml-[18px] block text-[#003a46] max-[760px]:ml-0">Right care.</span>
+                </h1>
+              </GlassCard>
+
+              <div className="mt-[14px] ml-[clamp(8px,2vw,30px)] max-[760px]:ml-0">
+                <p className="ml-[clamp(24px,8vw,150px)] w-[clamp(220px,28vw,315px)] max-w-full text-[clamp(13px,1.2vw,17px)] font-bold leading-[1.25] text-[#111111] max-[1100px]:ml-[clamp(18px,6vw,90px)] max-[900px]:ml-[clamp(10px,4vw,50px)] max-[760px]:ml-0">
+                  Smart symptom insights with trusted doctors, locations, and appointment details.
+                </p>
+                <PillButton className="mt-[10px] ml-[clamp(24px,8vw,150px)] px-[22px] py-[11px] max-[1100px]:ml-[clamp(18px,6vw,90px)] max-[900px]:ml-[clamp(10px,4vw,50px)] max-[760px]:ml-0">
+                  CHECK SYMPTOMS
+                </PillButton>
+              </div>
+            </div>
+
+            <div className="relative z-[3] flex h-[380px] w-[540px] shrink-0 items-center justify-center -translate-y-[70px] max-[1100px]:h-[320px] max-[1100px]:w-[460px] max-[900px]:h-[280px] max-[900px]:w-[380px] max-[760px]:mt-[10px] max-[760px]:-translate-y-[10px] max-[760px]:h-[240px] max-[760px]:w-full">
+              <img src={mainDoctorsIcon} alt="Doctors" className="h-full w-full object-contain object-center [mask-image:radial-gradient(ellipse_at_center,black_30%,black_45%,transparent_73%)] [-webkit-mask-image:radial-gradient(ellipse_at_center,black_30%,black_45%,transparent_73%)]" />
+            </div>
           </div>
 
-          <div className="about-block-contact">
-            <h4>Contact</h4>
-            <ul>
-              <li>Email: support@wecare.com</li>
-              <li>Phone: +880 1234-567890</li>
-              <li>Location: Dhaka, Bangladesh</li>
+          <div className="mt-[35px] flex flex-wrap justify-center gap-[20px]">
+            {stats.map((item, index) => (
+              
+              <GlassCard key={index} className="flex h-[200px] w-[300px] cursor-pointer flex-col items-center justify-center gap-[8px] rounded-[35px] border border-[rgba(255,250,250,0.5)] p-[10px] shadow-[0_15px_25px_rgba(0,0,0,0.25)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_18px_40px_rgba(0,0,0,0.15),0_0_20px_rgba(104,178,160,0.25)]">
+                <h2 className="relative z-[2] m-0 text-[32px] font-extrabold leading-none text-[#0d404b]">{item.number}</h2>
+                <p className="relative z-[2] m-0 bg-[linear-gradient(to_right,#0a6678,#00887f)] bg-clip-text text-center text-[24px] font-bold leading-[1.3] text-transparent">{item.label}</p>
+              </GlassCard>
+            ))}
+          </div>
+          <p className="mt-[50px] text-center text-[20px] italic text-[#369679]">Your path to the right care...</p>
+        </div>
+      </section>
+
+      
+      <section className="relative flex items-center justify-center gap-[42px] overflow-hidden bg-[#eef4ec] bg-[linear-gradient(122.176deg,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)] px-[48px] pb-[38px] pt-[48px] max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-[20px] max-[900px]:px-[24px] max-[900px]:pb-[24px] max-[900px]:pt-[34px]">
+        <div className="flex h-[220px] w-[220px] shrink-0 items-center justify-center max-[900px]:h-[170px] max-[900px]:w-[170px]">
+          <img src={doctorIcon} alt="Doctor" className="h-[180px] w-[180px] opacity-90 drop-shadow-[0_6px_14px_rgba(0,0,0,0.15)]" />
+        </div>
+        <div className="relative ml-[70px] w-full max-w-[760px] max-[900px]:ml-0">
+          <div className="absolute right-[18px] top-[-14px] z-[1] h-[170px] w-[110px] opacity-[0.55]"><LeafDecor /></div>
+          <div className="absolute bottom-[-32px] left-[-6px] z-[1] h-[170px] w-[110px] rotate-180 opacity-[0.45]"><LeafDecor /></div>
+          
+          <GlassCard className="w-full max-w-[720px] rounded-[50px] border border-[rgba(255,250,250,0.5)] bg-white/20 px-[34px] py-[34px] shadow-[0_15px_25px_rgba(0,0,0,0.25)] backdrop-blur-[2px]">
+            <h2 className="mb-[14px] max-w-[420px] text-[32px] font-bold leading-[1.12] text-[#1d5f71] max-[900px]:text-[28px]">Find Doctors Near You</h2>
+            <p className="mb-[24px] max-w-[500px] text-[15px] font-semibold leading-[1.25] text-[#4f7f89]">Browse doctors by specialty and location.</p>
+            <PillButton to="/doctors" className="px-[24px] py-[13px]">Browse Doctors</PillButton>
+          </GlassCard>
+        </div>
+      </section>
+
+      
+      <section className="relative flex flex-row-reverse items-center justify-center gap-[42px] overflow-hidden bg-[#eef4ec] bg-[linear-gradient(to_left,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)] px-[48px] pb-[38px] pt-[48px] max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-[20px] max-[900px]:px-[24px] max-[900px]:pb-[24px] max-[900px]:pt-[34px]">
+        <div className="flex h-[220px] w-[220px] shrink-0 items-center justify-center max-[900px]:h-[170px] max-[900px]:w-[170px]">
+          <img src={aiIcon} alt="AI" className="h-[180px] w-[180px] opacity-90 drop-shadow-[0_8px_18px_rgba(104,178,160,0.35)]" />
+        </div>
+        <div className="relative mr-[50px] w-full max-w-[760px] max-[900px]:mr-0">
+          <div className="absolute left-[18px] top-[-14px] z-[1] h-[170px] w-[110px] opacity-[0.55] max-[900px]:left-auto max-[900px]:right-[18px]"><LeafDecor /></div>
+          <div className="absolute bottom-[-32px] right-[-6px] z-[1] h-[170px] w-[110px] rotate-180 opacity-[0.45] max-[900px]:left-[-6px] max-[900px]:right-auto"><LeafDecor /></div>
+          <GlassCard className="w-full max-w-[720px] rounded-[50px] border border-[rgba(255,250,250,0.5)] bg-white/20 px-[34px] py-[34px] shadow-[0_15px_25px_rgba(0,0,0,0.25)] backdrop-blur-[2px]">
+            <h2 className="mb-[14px] max-w-[420px] text-[32px] font-bold leading-[1.12] text-[#1d5f71] max-[900px]:text-[28px]">Not Sure Where to Start?</h2>
+            <p className="mb-[24px] max-w-[500px] text-[15px] font-semibold leading-[1.25] text-[#4f7f89]">Enter your symptoms and we’ll guide you to the right specialist.</p>
+            <PillButton to="/symptoms" className="px-[24px] py-[13px]">Get Guidance</PillButton>
+          </GlassCard>
+        </div>
+      </section>
+
+      
+      <section className="relative flex items-center justify-center gap-[42px] overflow-hidden bg-[#eef4ec] bg-[linear-gradient(122.176deg,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)] px-[48px] pb-[38px] pt-[48px] max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-[20px] max-[900px]:px-[24px] max-[900px]:pb-[24px] max-[900px]:pt-[34px]">
+        <div className="flex h-[220px] w-[220px] shrink-0 items-center justify-center max-[900px]:h-[170px] max-[900px]:w-[170px]">
+          <img src={hospitalIcon} alt="Hospitals" className="h-[180px] w-[180px] opacity-90 drop-shadow-[0_8px_18px_rgba(104,178,160,0.35)] transition-transform duration-300 hover:scale-105" />
+        </div>
+        <div className="relative ml-[70px] w-full max-w-[760px] max-[900px]:ml-0">
+          <div className="absolute right-[18px] top-[-14px] z-[1] h-[170px] w-[110px] opacity-[0.55]"><LeafDecor /></div>
+          <div className="absolute bottom-[-32px] left-[-6px] z-[1] h-[170px] w-[110px] rotate-180 opacity-[0.45]"><LeafDecor /></div>
+          <GlassCard className="w-full max-w-[720px] rounded-[50px] border border-[rgba(255,250,250,0.5)] bg-white/20 px-[34px] py-[34px] shadow-[0_15px_25px_rgba(0,0,0,0.25)] backdrop-blur-[2px]">
+            <h2 className="mb-[14px] max-w-[420px] text-[32px] font-bold leading-[1.12] text-[#1d5f71] max-[900px]:text-[28px]">Care, Close to You</h2>
+            <p className="mb-[24px] max-w-[500px] text-[15px] font-semibold leading-[1.25] text-[#4f7f89]">Find hospitals and diagnostic centers around you with ease.</p>
+            <PillButton to="/hospitals" className="px-[24px] py-[13px]">Find Hospitals</PillButton>
+          </GlassCard>
+        </div>
+      </section>
+
+      
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,#f4faf7_0%,#edf7f2_45%,#e4f1eb_100%)] px-[40px] pb-[50px] pt-[70px] text-center max-[900px]:px-[24px] max-[900px]:pb-[30px] max-[900px]:pt-[50px]">
+        <div className="pointer-events-none absolute left-[-40px] top-[10px] h-[240px] w-[240px] rounded-full bg-[rgba(104,178,160,0.45)] opacity-50 blur-[60px]" />
+        <div className="pointer-events-none absolute bottom-[20px] right-[-60px] h-[280px] w-[280px] rounded-full bg-[rgba(90,153,172,0.35)] opacity-50 blur-[60px]" />
+
+        <h2 className="relative z-[2] mb-[34px] text-[36px] font-bold text-[#1d5f71] max-[900px]:text-[30px]">Why Choose WeCare</h2>
+
+        <div className="relative z-[2] flex flex-wrap justify-center gap-[24px]">
+          {[
+            ["✓", "Verified Doctors", "Connect with trusted professionals through clear profiles and reliable healthcare information."],
+            ["+", "Easy Access", "Search symptoms, compare options, and move through care choices with a simple experience."],
+            ["★", "Confident Decisions", "Explore doctors, locations, and support tools that help you choose the right path."],
+          ].map(([icon, title, text]) => (
+            
+            <GlassCard key={title} className="min-h-[230px] w-[300px] rounded-[34px] px-[24px] py-[28px] text-left max-[900px]:max-w-[420px] max-[900px]:w-full">
+              <div className="mb-[18px] flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[linear-gradient(to_right,#046ea3,#90e0cc)] text-[22px] font-bold text-white shadow-[0_10px_18px_rgba(4,110,163,0.18)]">
+                {icon}
+              </div>
+              <h3 className="mb-[12px] text-[22px] text-[#1d5f71]">{title}</h3>
+              <p className="m-0 text-[15px] font-semibold leading-[1.45] text-[#4f7f89]">{text}</p>
+            </GlassCard>
+          ))}
+        </div>
+      </section>
+
+      
+      <section className="relative flex justify-center overflow-hidden bg-[linear-gradient(180deg,#eaf5ef_0%,#e0efe8_100%)] px-[40px] pb-[80px] pt-[40px] max-[900px]:px-[24px] max-[900px]:pb-[50px] max-[900px]:pt-[30px]">
+        <div className="pointer-events-none absolute left-[5%] top-[10%] h-[280px] w-[280px] rounded-full bg-[rgba(104,178,160,0.5)] opacity-[0.45] blur-[70px]" />
+        <div className="pointer-events-none absolute bottom-0 right-[2%] h-[300px] w-[300px] rounded-full bg-[rgba(4,110,163,0.22)] opacity-[0.45] blur-[70px]" />
+
+        <GlassCard className="relative z-[2] w-full max-w-[960px] rounded-[46px] px-[34px] py-[46px] text-center max-[900px]:px-[24px] max-[900px]:py-[36px]">
+          <p className="mb-[12px] text-[14px] font-bold uppercase tracking-[0.4px] text-[#369679]">Start your care journey</p>
+          <h2 className="mb-[16px] text-[38px] font-bold leading-[1.15] text-[#1d5f71] max-[900px]:text-[30px]">Find clarity, comfort, and the care you deserve.</h2>
+          <p className="mb-[24px] text-[16px] font-semibold text-[#4f7f89]">Explore symptoms, discover doctors, and take the next step with confidence.</p>
+          <PillButton to="/login" className="px-[28px] py-[14px]">Get Started</PillButton>
+        </GlassCard>
+      </section>
+
+      
+      <section className="bg-[#eef4ec] px-[40px] pb-[30px] pt-[50px]">
+        <div className="grid grid-cols-4 gap-[40px] max-[900px]:grid-cols-2 max-[900px]:gap-[24px] max-[600px]:grid-cols-1">
+          <div>
+            <h3 className="mb-[10px] text-[22px] text-[#1d5f71]">WeCare</h3>
+            <p className="text-[14px] leading-[1.5] text-[#4f7f89]">Your trusted platform for finding doctors, exploring care options, and booking appointments with ease.</p>
+          </div>
+          <div>
+            <h4 className="mb-[10px] text-[18px] text-[#1d5f71]">Quick Links</h4>
+            <ul className="m-0 list-none p-0">
+              {["Symptoms", "Doctors", "Hospitals"].map(link => (
+                <li key={link} className="mb-[6px] cursor-pointer text-[14px] text-[#4f7f89]">{link}</li>
+              ))}
             </ul>
           </div>
-
-          <div className="about-block">
-            <h4>Hours</h4>
-            <ul>
+          <div>
+            <h4 className="mb-[10px] text-[18px] text-[#1d5f71]">Contact</h4>
+            <ul className="m-0 list-none p-0 text-[14px] text-[#4f7f89]">
+              <li className="mb-[6px] hover:text-[#046ea3] cursor-pointer">Email: support@wecare.com</li>
+              <li className="mb-[6px] hover:text-[#046ea3] cursor-pointer">Phone: +880 1234-567890</li>
+              <li className="mb-[6px] hover:text-[#046ea3] cursor-pointer">Location: Dhaka, Bangladesh</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-[10px] text-[18px] text-[#1d5f71]">Hours</h4>
+            <ul className="m-0 list-none p-0 text-[14px] text-[#4f7f89]">
               <li>Sun - Thurs: 9:00 AM - 8:00 PM</li>
               <li>Sat: 10:00 AM - 6:00 PM</li>
               <li>Fri: Closed</li>
             </ul>
           </div>
-
         </div>
-
-        <div className="about-bottom">
-          © 2026 WeCare. All rights reserved.
-        </div>
+        <div className="mt-[30px] text-center text-[13px] text-[#6c8f95]">© 2026 WeCare. All rights reserved.</div>
       </section>
-
     </>
   );
 };
