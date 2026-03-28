@@ -16,7 +16,10 @@ const app = express();
 app.set("trust proxy", 1);
 
 //  CORS (Postman + local dev)
-app.use(cors({ origin: "*" }));
+app.use(cors({
+  origin: "http://localhost:5173", // Your exact frontend URL
+  credentials: true // This allows the secure cookie to pass through
+}));
 
 //  Security
 app.use(
