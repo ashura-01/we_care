@@ -1,7 +1,7 @@
-import logo from '../assets/logo.png'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AuthCard from '../components/AuthCard'
+import axiosInstance from '../utils/axiosInstance' 
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -9,6 +9,10 @@ function Login() {
     password: '',
     remember: false,
   })
+  
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -18,46 +22,37 @@ function Login() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login Data:', formData)
-    alert('Login button clicked. Backend later connect korba.')
+    setError(null)      
+    setLoading(true)    
+
+    try {
+      const response = await axiosInstance.post('/users/login', {
+        email: formData.email,
+        password: formData.password,
+      })
+
+      if (response.data.success) {
+        console.log('Login successful!', response.data.user)
+        navigate('/') 
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false) 
+    }
   }
 
   return (
     <div
-      className="min-h-screen text-slate-800"
+      className="min-h-screen text-slate-800 flex flex-col items-center justify-center"
       style={{
         fontFamily: 'Arial, sans-serif',
         background: 'linear-gradient(135deg, #f8fbfa 0%, #eef7f4 100%)',
       }}
     >
-      <header className="h-[84px] border-b border-[#dcebe7] bg-white/90 px-[42px] backdrop-blur-[10px]">
-        <div className="mx-auto flex h-full w-full items-center justify-between">
-          <div className="flex items-center gap-[10px] text-[2rem] font-bold text-[#156f72]">
-            <img
-              src={logo}
-              alt="WeCare Logo"
-              className="block h-[42px] w-[42px] object-contain"
-            />
-            <span className="inline-flex items-center justify-center text-[1.9rem] leading-none">
-              WeCare
-            </span>
-          </div>
-
-          <button
-            type="button"
-            className="rounded-[18px] px-8 py-[11px] text-base font-bold text-white shadow-[0_8px_18px_rgba(21,119,121,0.18)] transition-all duration-200 hover:-translate-y-[1px] hover:opacity-95"
-            style={{
-              background: 'linear-gradient(90deg, #157779, #1ea48d)',
-            }}
-          >
-            Home
-          </button>
-        </div>
-      </header>
-
-      <main className="flex min-h-[calc(100vh-84px)] flex-col items-center justify-start px-5 pt-[44px] pb-8">
+      <main className="flex w-full flex-col items-center justify-center px-5 py-8">
         <div className="mb-6 text-center">
           <div className="text-[3.9rem] leading-none text-[#2d9aa3]">💚</div>
           <h1 className="mt-[6px] mb-[6px] text-[3rem] font-bold leading-[1.1] text-[#1c7f8d]">
@@ -76,6 +71,12 @@ function Login() {
           </h2>
 
           <p className="mb-5 text-[0.96rem] text-[#6b7280]">Welcome back!</p>
+
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-[14px]">
@@ -104,12 +105,15 @@ function Login() {
 
             <button
               type="submit"
-              className="mt-[10px] h-[42px] w-full rounded-full border-none text-[1.04rem] font-bold text-white shadow-[0_8px_18px_rgba(16,176,132,0.2)] transition-all duration-200 hover:-translate-y-[1px] hover:opacity-95"
+              disabled={loading}
+              className={`mt-[10px] h-[42px] w-full rounded-full border-none text-[1.04rem] font-bold text-white shadow-[0_8px_18px_rgba(16,176,132,0.2)] transition-all duration-200 ${
+                loading ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-[1px] hover:opacity-95'
+              }`}
               style={{
                 background: 'linear-gradient(90deg, #0da574, #10b084)',
               }}
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 

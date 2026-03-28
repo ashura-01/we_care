@@ -1,10 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import LoginSignup from "../pages/Login-Signup";
+// 1. Import your actual Login component instead of the placeholder
+import Login from "../pages/Login"; 
 
 const LoginRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<LoginSignup />} />
+      // 2. Tell the route to render your Login component
+      <Route path="/" element={<Login />} />
     </Routes>
   );
 };
