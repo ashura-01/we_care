@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthCard from '../components/AuthCard'
-import axiosInstance from '../utils/axiosInstance' 
+import axiosInstance from '../utils/axiosInstance'
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ function Login() {
     password: '',
     remember: false,
   })
-  
+
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -24,8 +24,8 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError(null)      
-    setLoading(true)    
+    setError(null)
+    setLoading(true)
 
     try {
       const response = await axiosInstance.post('/users/login', {
@@ -35,12 +35,12 @@ function Login() {
 
       if (response.data.success) {
         console.log('Login successful!', response.data.user)
-        navigate('/') 
+        navigate('/')
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.')
     } finally {
-      setLoading(false) 
+      setLoading(false)
     }
   }
 
@@ -119,6 +119,7 @@ function Login() {
 
           <p className="mt-[14px] text-center text-[0.94rem] text-[#6b7280]">
             Don&apos;t have an account?{' '}
+            {/* The link below will trigger the route we just set up in AppRoutes */}
             <Link
               to="/signup"
               className="font-bold text-[#128b8e] no-underline hover:underline"
