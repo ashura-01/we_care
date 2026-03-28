@@ -7,7 +7,6 @@ exports.createReview = async (req, res) => {
     const { doctorId } = req.params;
     const { patientName, rating, comment } = req.body;
 
-    // Verify doctor exists first
     const doctorExists = await doctorModel.findById(doctorId);
     if (!doctorExists) {
       return res.status(404).json({ success: false, message: "Doctor not found" });

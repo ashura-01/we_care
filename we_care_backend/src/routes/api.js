@@ -4,7 +4,6 @@ const userController = require("../controllers/userController");
 const doctorController = require("../controllers/doctorController");
 const auth = require("../middlewares/authVerification");
 const reviewController = require("../controllers/reviewController");
-const aiController = require("../controllers/aiController");
 const blogController = require("../controllers/blogController");
 
 
@@ -37,8 +36,7 @@ router.put("/doctor-profile", auth(), doctorController.updateDoctorProfile);
 router.get("/reviews/:doctorId", reviewController.getDoctorReviews);
 router.post("/reviews/:doctorId", reviewController.createReview);
 
-// --------- AI ROUTES ---------------------
-router.post("/ai/recommend-doctor", auth(), aiController.analyzeSymptoms);
+
 
 // --------- PUBLIC BLOG ROUTES (Anyone can read) -----------
 router.get("/blogs", blogController.getAllBlogs);

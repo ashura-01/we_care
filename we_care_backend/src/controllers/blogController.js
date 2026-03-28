@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const blogModel = require("../models/blogModel");
-const doctorModel = require("../models/doctorModel"); // Need this to verify they are a doctor
+const doctorModel = require("../models/doctorModel");
 
 // ----------------- CREATE BLOG -----------------
 exports.createBlog = async (req, res) => {
   try {
-    // 1. Verify the logged-in user is actually a registered doctor
+
     const isDoctor = await doctorModel.findOne({ userId: req.user._id });
     if (!isDoctor) {
       return res.status(403).json({ success: false, message: "Access denied. Only doctors can post blogs." });
@@ -13,14 +13,14 @@ exports.createBlog = async (req, res) => {
 
     let { title, category, image, description, shortDescription } = req.body;
 
-    // 2. Create the blog and attach the doctor's user ID
+
     let data = await blogModel.create({
       title,
       category,
       image,
       description,
       shortDescription,
-      authorId: req.user._id, // Automatically assign the author!
+      authorId: req.user._id,
     });
 
     res.status(200).json({ success: true, message: "Blog created successfully", data });
@@ -32,7 +32,7 @@ exports.createBlog = async (req, res) => {
 // ----------------- GET ALL BLOGS -----------------
 exports.getAllBlogs = async (req, res) => {
   try {
-    let pageNo = Number(req.query.pageNo) || 1; // Changed to query params for standard REST
+    let pageNo = Number(req.query.pageNo) || 1;
     let perpage = Number(req.query.perpage) || 10;
     let skipRow = (pageNo - 1) * perpage;
 
@@ -43,7 +43,7 @@ exports.getAllBlogs = async (req, res) => {
           { $sort: { createdAt: -1 } },
           { $skip: skipRow },
           { $limit: perpage },
-          // NEW: Fetch the author's name from the users collection
+
           {
             $lookup: {
               from: "users",
@@ -52,11 +52,11 @@ exports.getAllBlogs = async (req, res) => {
               as: "author",
             },
           },
-          { $unwind: "$author" }, // Flattens the author array
+          { $unwind: "$author" },
           {
             $project: {
               title: 1, image: 1, category: 1, shortDescription: 1, createdAt: 1,
-              "author.name": 1, // We only want to send the doctor's name, not their password/email!
+              "author.name": 1,
             },
           },
         ],
@@ -78,7 +78,7 @@ exports.getSingleBlog = async (req, res) => {
 
     let matchstage = { $match: { _id: new mongoose.Types.ObjectId(id) } };
     
-    // Fetch author details
+
     let joinAuthor = {
       $lookup: { from: "users", localField: "authorId", foreignField: "_id", as: "author" }
     };
@@ -104,7 +104,7 @@ exports.updateBlog = async (req, res) => {
     let { id } = req.params;
     let { title, category, image, description, shortDescription } = req.body;
 
-    // Ensure the person updating it is the person who wrote it
+
     const blog = await blogModel.findOne({ _id: id, authorId: req.user._id });
     if (!blog) {
       return res.status(403).json({ success: false, message: "You can only edit your own blogs." });
@@ -127,7 +127,7 @@ exports.deleteBlog = async (req, res) => {
   try {
     let { id } = req.params;
 
-    // Ensure the person deleting it is the person who wrote it
+
     const blog = await blogModel.findOne({ _id: id, authorId: req.user._id });
     if (!blog) {
        return res.status(403).json({ success: false, message: "You can only delete your own blogs." });
@@ -149,17 +149,17 @@ exports.getBlogsByDoctor = async (req, res) => {
     let perpage = Number(req.query.perpage) || 10;
     let skipRow = (pageNo - 1) * perpage;
 
-    // 1. First, find the doctor to get their actual User ID (which is the authorId in blogs)
+
     const doctor = await doctorModel.findById(doctorId);
     
     if (!doctor) {
       return res.status(404).json({ success: false, message: "Doctor not found" });
     }
 
-    // 2. Match blogs where the authorId equals this doctor's userId
+
     let matchStage = { $match: { authorId: new mongoose.Types.ObjectId(doctor.userId) } };
 
-    // 3. Reuse your awesome pagination and lookup pipeline!
+
     let facetStage = {
       $facet: {
         totalCount: [{ $count: "count" }],

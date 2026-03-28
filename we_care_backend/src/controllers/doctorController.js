@@ -7,7 +7,7 @@ exports.getAllDoctors = async (req, res) => {
     const perpage = parseInt(req.query.perpage) || 10;
     const skipRow = (pageNo - 1) * perpage;
 
-    // Build filter
+
     let filter = {};
 
     if (req.query.specialization) {
@@ -121,37 +121,37 @@ exports.getDoctorById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Convert string ID to MongoDB ObjectId for the aggregation match stage
+
     const doctorId = new mongoose.Types.ObjectId(id);
 
     const pipeline = [
-      // 1. Find the specific doctor by their ID
+
       {
         $match: { _id: doctorId }
       },
-      // 2. Join the User collection to get the doctor's name, email, etc.
+
       {
         $lookup: {
-          from: "users",          // The name of the users collection
-          localField: "userId",   // The field in the doctors collection
-          foreignField: "_id",    // The matching field in the users collection
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
           as: "user"
         }
       },
-      // 3. Unwind the user array so it's a single object
+
       {
         $unwind: "$user"
       },
-      // 4. Join the Reviews collection to get all reviews for this doctor
+
       {
         $lookup: {
-          from: "reviews",        // Must match exactly your review collection name
-          localField: "_id",      // The doctor's ID
-          foreignField: "doctorId",// The field in the reviews collection linking back
-          as: "reviews"           // The name of the new array holding the reviews
+          from: "reviews",        
+          localField: "_id",      
+          foreignField: "doctorId",
+          as: "reviews"           
         }
       },
-      // 5. Project (format) the final output structure
+
       {
         $project: {
           _id: 1,
@@ -164,7 +164,7 @@ exports.getDoctorById = async (req, res) => {
           "user.name": 1,
           "user.email": 1,
           "user.phone": 1,
-          reviews: 1 // Include the full array of reviews
+          reviews: 1
         }
       }
     ];
@@ -178,7 +178,7 @@ exports.getDoctorById = async (req, res) => {
       });
     }
 
-    // result is an array, so we send the first (and only) object
+
     res.json({
       success: true,
       doctor: result[0],

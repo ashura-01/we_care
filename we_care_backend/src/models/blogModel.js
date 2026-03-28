@@ -8,7 +8,7 @@ const DataSchema = new mongoose.Schema(
     description: { type: String, required: true },
     shortDescription: { type: String, required: true },
     
-    // NEW: This links the blog directly to the logged-in Doctor!
+  
     authorId: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   },
   {

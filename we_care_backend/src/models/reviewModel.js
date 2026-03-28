@@ -4,7 +4,7 @@ const ReviewSchema = new mongoose.Schema(
   {
     doctorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "doctors", // Matches his doctor model name
+      ref: "doctors",
       required: true,
     },
     patientName: {
