@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const blogModel = require("../models/blogModel");
 const doctorModel = require("../models/doctorModel");
+const commentModel = require("../models/commentModel"); 
 
 // ----------------- CREATE BLOG -----------------
 exports.createBlog = async (req, res) => {
@@ -76,25 +77,62 @@ exports.getSingleBlog = async (req, res) => {
   try {
     let { id } = req.params;
 
-    let matchstage = { $match: { _id: new mongoose.Types.ObjectId(id) } };
-    
-
-    let joinAuthor = {
-      $lookup: { from: "users", localField: "authorId", foreignField: "_id", as: "author" }
-    };
-
-    let project = {
-      $project: {
-        title: 1, category: 1, image: 1, description: 1, createdAt: 1,
-        "author.name": 1
+    let blog = await blogModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "authorId",
+          foreignField: "_id",
+          as: "author"
+        }
+      },
+      { $unwind: "$author" },
+      {
+        $project: {
+          title: 1,
+          category: 1,
+          image: 1,
+          description: 1,
+          shortDescription: 1,
+          createdAt: 1,
+          "author.name": 1
+        }
       }
-    };
+    ]);
 
-    let data = await blogModel.aggregate([matchstage, joinAuthor, { $unwind: "$author" }, project]);
+    if (!blog || blog.length === 0) {
+      return res.status(404).json({ success: false, message: "Blog not found" });
+    }
 
-    res.status(200).json({ success: true, message: "Blog fetched successfully", data: data[0] });
+    let comments = await commentModel.aggregate([
+      { $match: { blogId: new mongoose.Types.ObjectId(id) } },
+      { $sort: { createdAt: -1 } },
+      {
+        $project: {
+          comment: 1,
+          name: 1,        
+          email: 1,       
+          createdAt: 1,
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: "Blog fetched successfully",
+      data: {
+        blog: blog[0],
+        comments: comments  
+      }
+    });
+
   } catch (error) {
-    res.status(500).json({ success: false, error: error.toString(), message: "Failed to fetch single blog" });
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "Failed to fetch single blog",
+    });
   }
 };
 
@@ -130,7 +168,7 @@ exports.deleteBlog = async (req, res) => {
 
     const blog = await blogModel.findOne({ _id: id, authorId: req.user._id });
     if (!blog) {
-       return res.status(403).json({ success: false, message: "You can only delete your own blogs." });
+      return res.status(403).json({ success: false, message: "You can only delete your own blogs." });
     }
 
     let data = await blogModel.findByIdAndDelete(id);
@@ -141,24 +179,21 @@ exports.deleteBlog = async (req, res) => {
   }
 };
 
-// ----------------- GET BLOGS BY SPECIFIC DOCTOR -----------------
+// ------------ GET BLOGS BY SPECIFIC DOCTOR -------------
+
 exports.getBlogsByDoctor = async (req, res) => {
   try {
-    let { doctorId } = req.params; 
+    let { doctorId } = req.params;
     let pageNo = Number(req.query.pageNo) || 1;
     let perpage = Number(req.query.perpage) || 10;
     let skipRow = (pageNo - 1) * perpage;
 
-
     const doctor = await doctorModel.findById(doctorId);
-    
     if (!doctor) {
       return res.status(404).json({ success: false, message: "Doctor not found" });
     }
 
-
     let matchStage = { $match: { authorId: new mongoose.Types.ObjectId(doctor.userId) } };
-
 
     let facetStage = {
       $facet: {
@@ -177,8 +212,26 @@ exports.getBlogsByDoctor = async (req, res) => {
           },
           { $unwind: "$author" },
           {
+            $lookup: {
+              from: "comments",
+              localField: "_id",
+              foreignField: "blogId",
+              as: "comments",
+            },
+          },
+          {
+            $addFields: {
+              commentCount: { $size: "$comments" }
+            }
+          },
+          {
             $project: {
-              title: 1, image: 1, category: 1, shortDescription: 1, createdAt: 1,
+              title: 1,
+              image: 1,
+              category: 1,
+              shortDescription: 1,
+              createdAt: 1,
+              commentCount: 1,  // ← ADD THIS
               "author.name": 1,
             },
           },
@@ -188,17 +241,17 @@ exports.getBlogsByDoctor = async (req, res) => {
 
     let blogs = await blogModel.aggregate([matchStage, facetStage]);
 
-    res.status(200).json({ 
-      success: true, 
-      message: "Doctor's blogs fetched successfully", 
-      data: blogs 
+    res.status(200).json({
+      success: true,
+      message: "Doctor's blogs fetched successfully",
+      data: blogs
     });
 
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      error: error.toString(), 
-      message: "Failed to fetch doctor's blogs" 
+    res.status(500).json({
+      success: false,
+      error: error.toString(),
+      message: "Failed to fetch doctor's blogs"
     });
   }
 };

@@ -5,6 +5,7 @@ const doctorController = require("../controllers/doctorController");
 const auth = require("../middlewares/authVerification");
 const reviewController = require("../controllers/reviewController");
 const blogController = require("../controllers/blogController");
+const commentController = require("../controllers/commentController")
 
 
 // Test route
@@ -48,5 +49,13 @@ router.post("/blogs", auth(), blogController.createBlog);
 router.put("/blogs/:id", auth(), blogController.updateBlog);
 router.delete("/blogs/:id", auth(), blogController.deleteBlog);
 
+
+
+
+// COMMENT ROUTES
+router.post("/create-comment", auth(), commentController.createComment);
+router.get("/all-comments", commentController.getAllComments);
+router.get("/single-comment/:id", auth(), commentController.getSingleComment);
+router.put("/delete-comment/:id", auth(), commentController.deleteComment);
 
 module.exports = router;
