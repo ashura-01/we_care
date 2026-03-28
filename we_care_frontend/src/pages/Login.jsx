@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthCard from '../components/AuthCard'
-import axiosInstance from '../utils/axiosInstance'
+import { useAuth } from '../contexts/AuthContext';
+import { authController } from '../api/authController'
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ function Login() {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  
+  const { loginUser } = useAuth()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -28,17 +31,19 @@ function Login() {
     setLoading(true)
 
     try {
-      const response = await axiosInstance.post('/users/login', {
-        email: formData.email,
-        password: formData.password,
-      })
+      const response = await authController.login(formData.email, formData.password)
 
-      if (response.data.success) {
-        console.log('Login successful!', response.data.user)
+      if (response.success) {
+        console.log('Login successful!', response.user)
+        
+        loginUser(response.user) 
+        
         navigate('/')
+      } else {
+        setError(response.message || 'Login failed. Please try again.')
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.')
+      setError('Something went wrong. Please check your connection.')
     } finally {
       setLoading(false)
     }
@@ -119,7 +124,6 @@ function Login() {
 
           <p className="mt-[14px] text-center text-[0.94rem] text-[#6b7280]">
             Don&apos;t have an account?{' '}
-            {/* The link below will trigger the route we just set up in AppRoutes */}
             <Link
               to="/signup"
               className="font-bold text-[#128b8e] no-underline hover:underline"

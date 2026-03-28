@@ -1,7 +1,18 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
 
+import { useAuth } from "../contexts/AuthContext";
+
 const NavBar = () => {
+  const { user, logoutUser } = useAuth();
+  const navigate = useNavigate();
+
+
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate("/login"); 
+  };
+
   return (
     <nav className="flex w-full items-center justify-between px-[36px] py-[14px] gap-[20px] box-border">
       
@@ -10,7 +21,6 @@ const NavBar = () => {
         <span className="text-[28px] font-bold text-[#2C6975]">WeCare</span>
       </Link>
 
-      
       <div className="flex flex-1 items-end justify-end gap-[24px] mx-[40px]">
         <Link 
           className="no-underline text-[#2C6975] text-[16px] font-black whitespace-nowrap transition-all duration-200 hover:text-[#1f4655]" 
@@ -32,13 +42,29 @@ const NavBar = () => {
         </Link>
       </div>
 
-      
-      <Link 
-        className="no-underline bg-gradient-to-r from-[#68B2A0] to-[#cdfa91] bg-[length:200%_100%] text-white border border-white px-[35px] py-[3px] rounded-[10px] text-[16px] font-bold shadow-[0_6px_12px_rgba(0,0,0,0.3)] shrink-0 whitespace-nowrap transition-all duration-300 ease-in-out hover:bg-right hover:text-[#2C6975]" 
-        to="/login"
-      >
-        Login / Signup
-      </Link>
+      {/* --- DYNAMIC LOGIN/LOGOUT SECTION --- */}
+      {user ? (
+    
+        <div className="flex items-center gap-4 shrink-0">
+          <span className="text-[#2C6975] text-[16px] font-black whitespace-nowrap">
+            Hi, <span className="capitalize">{user.name || user.fullName || "User"}</span>
+          </span>
+          <button 
+            onClick={handleLogout}
+            className="bg-transparent border-[2px] border-[#68B2A0] text-[#2C6975] px-[25px] py-[3px] rounded-[10px] text-[16px] font-bold transition-all duration-300 ease-in-out hover:bg-[#68B2A0] hover:text-white cursor-pointer"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
+
+        <Link 
+          className="no-underline bg-gradient-to-r from-[#68B2A0] to-[#cdfa91] bg-[length:200%_100%] text-white border border-white px-[35px] py-[3px] rounded-[10px] text-[16px] font-bold shadow-[0_6px_12px_rgba(0,0,0,0.3)] shrink-0 whitespace-nowrap transition-all duration-300 ease-in-out hover:bg-right hover:text-[#2C6975]" 
+          to="/login"
+        >
+          Login / Signup
+        </Link>
+      )}
     </nav>
   );
 };
