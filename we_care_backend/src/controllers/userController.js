@@ -5,15 +5,36 @@ const { EncodeToken } = require("../utility/tokenHelper");
 // ----------------- REGISTER PATIENT -----------------
 exports.register = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      password,
+      address,
+      gender,
+      bloodgroup
+    } = req.body;
 
-    if (!name || !email || !phone || !password) {
+    if (!name || !email || !phone || !password || !address || !gender || !bloodgroup) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
-
+    const validBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    if (!validBloodGroups.includes(bloodgroup.toUpperCase())) {
+      return res.status(400).json({
+        success: false,
+        message: "invalid blood group",
+      });
+    }
+    const validGenders = ["Male", "Female"];
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid gender",
+      });
+    }
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -27,6 +48,9 @@ exports.register = async (req, res) => {
       email,
       phone,
       password,
+      address,
+      gender,
+      bloodgroup: bloodgroup.toUpperCase(),
     });
 
     const token = EncodeToken(user.email, user._id);
@@ -46,6 +70,9 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        address: user.address,     
+        gender: user.gender,       
+        bloodgroup: user.bloodgroup 
       },
       token,
     });
@@ -66,6 +93,9 @@ exports.registerDoctor = async (req, res) => {
       email,
       phone,
       password,
+      address,
+      gender,
+      bloodgroup,
       specialization,
       experience,
       hospital,
@@ -77,6 +107,9 @@ exports.registerDoctor = async (req, res) => {
       !email ||
       !phone ||
       !password ||
+      !address ||
+      !gender ||
+      !bloodgroup ||
       !specialization ||
       !experience ||
       !hospital ||
@@ -85,6 +118,24 @@ exports.registerDoctor = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+
+
+    const validBloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+    if (!validBloodGroups.includes(bloodgroup.toUpperCase())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid blood group",
+      });
+    }
+
+
+    const validGenders = ["Male", "Female"];
+    if (!validGenders.includes(gender)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid gender",
       });
     }
 
@@ -102,6 +153,9 @@ exports.registerDoctor = async (req, res) => {
       email,
       phone,
       password,
+      address,
+      gender,
+      bloodgroup: bloodgroup.toUpperCase(),
     });
 
     // Create doctor profile
@@ -130,6 +184,9 @@ exports.registerDoctor = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        address: user.address,     
+        gender: user.gender,       
+        bloodgroup: user.bloodgroup 
       },
       doctor,
       token,
@@ -183,6 +240,7 @@ exports.login = async (req, res) => {
     // Check if user is doctor
     const doctor = await doctorModel.findOne({ userId: user._id });
 
+    // Update user response object
     res.json({
       success: true,
       message: "Login successful",
@@ -191,6 +249,9 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        address: user.address,    
+        gender: user.gender,      
+        bloodgroup: user.bloodgroup, 
         isDoctor: doctor ? true : false,
       },
       doctor: doctor || null,
@@ -253,12 +314,13 @@ exports.getProfile = async (req, res) => {
 // ----------------- UPDATE PROFILE -----------------
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, address } = req.body;
 
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (phone) updateData.phone = phone;
+    if (address) updateData.address = address;
 
     const user = await userModel
       .findByIdAndUpdate(req.user._id, updateData, { new: true, runValidators: true })
