@@ -1,7 +1,7 @@
 // routes/AppRoutes.js
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "../pages/Home";
-import Doctors from "../pages/Doctors";
+import DoctorList from "../pages/DoctorsList";
 import Symptoms from "../pages/Symptoms";
 import Hospitals from "../pages/Hospitals";
 import AdminRoutes from "./AdminRoutes";
@@ -9,6 +9,7 @@ import SignupChoice from "../pages/SignupChoice";
 import PatientSignup from "../pages/PatientSignup";
 import DoctorSignup from "../pages/DoctorSignup";
 import Login from "../pages/Login"; // Import your actual login component
+import DoctorProfile from "../pages/DoctorProfile";
 import { ProtectedRoute } from "./ProtectedRoutes";
 
 const AppRoutes = () => {
@@ -47,7 +48,7 @@ const AppRoutes = () => {
       
       <Route path="/doctors" element={
         <ProtectedRoute>
-          <Doctors />
+          <DoctorList />
         </ProtectedRoute>
       } />
       
@@ -68,6 +69,13 @@ const AppRoutes = () => {
           <AdminRoutes />
         </ProtectedRoute>
       } />
+
+      <Route path="/doctor/:id" element={
+        <ProtectedRoute>
+          <DoctorProfile />
+        </ProtectedRoute>
+      } />
+
     </Routes>
   );
 };
