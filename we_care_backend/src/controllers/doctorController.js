@@ -81,6 +81,7 @@ exports.getAllDoctors = async (req, res) => {
               hospital: 1,
               fees: 1,
               verified: 1,
+              profileImage: 1,
               "user._id": 1,
               "user.name": 1,
               "user.email": 1,
@@ -160,6 +161,7 @@ exports.getDoctorById = async (req, res) => {
           hospital: 1,
           fees: 1,
           verified: 1,
+          profileImage: 1,
           "user._id": 1,
           "user.name": 1,
           "user.email": 1,
@@ -237,6 +239,10 @@ exports.updateDoctorProfile = async (req, res) => {
     if (experience) updateData.experience = Number(experience);
     if (hospital) updateData.hospital = hospital;
     if (fees) updateData.fees = Number(fees);
+
+    if (req.file) {
+      updateData.profileImage = req.file.path;
+    }
 
     const doctor = await doctorModel.findOneAndUpdate(
       { userId: req.user._id },

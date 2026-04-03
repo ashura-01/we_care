@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
 import { useAuth } from "../contexts/AuthContext";
-import LeafDecor from "./LeafDecor"; 
+import LeafDecor from "./LeafDecor";
 
 const NavBar = () => {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     await logoutUser();
     setIsOpen(false);
+    setShowDropdown(false);
     navigate("/login");
   };
 
@@ -20,7 +34,7 @@ const NavBar = () => {
   const navLinkStyle = "no-underline text-[#2C6975] text-[16px] font-black whitespace-nowrap transition-all duration-200 hover:text-[#1f4655]";
 
   return (
-    <nav className="relative w-full border-box bg-white">
+    <nav className="relative w-full border-box bg-white shadow-sm">
       <div className="flex w-full items-center justify-between px-[clamp(16px,4vw,36px)] py-[14px] gap-[20px]">
         
         
@@ -29,7 +43,7 @@ const NavBar = () => {
           <span className="text-[22px] md:text-[28px] font-bold text-[#2C6975]">WeCare</span>
         </Link>
 
-        
+        {/* Desktop Navigation Links */}
         <div className="hidden min-[850px]:flex flex-1 items-center justify-center gap-[32px] mx-[40px]">
           <Link className={navLinkStyle} to="/symptoms">Symptoms</Link>
           <Link className={navLinkStyle} to="/doctors">Doctors</Link>
@@ -39,12 +53,45 @@ const NavBar = () => {
         
         <div className="hidden min-[850px]:flex items-center gap-4 shrink-0">
           {user ? (
-            <div className="flex items-center gap-4">
-              <span className="text-[#2C6975] text-[16px] font-black">Hi, {user.name || "User"}</span>
-              <button onClick={handleLogout} className="bg-transparent border-[2px] border-[#68B2A0] text-[#2C6975] px-[25px] py-[3px] rounded-[10px] text-[16px] font-bold transition-all hover:bg-[#68B2A0] hover:text-white cursor-pointer">Logout</button>
+            <div className="relative" ref={dropdownRef}>
+              <div 
+                className="flex items-center gap-3 cursor-pointer group"
+                onClick={() => setShowDropdown(!showDropdown)}
+              >
+                <span className="text-[#2C6975] text-[16px] font-black">Hi, {user.name?.split(' ')[0] || "User"}</span>
+                <div className="w-[40px] h-[40px] rounded-full border-2 border-[#68B2A0] overflow-hidden transition-transform group-hover:scale-105">
+                  <img 
+                    src={user.photoURL || "https://ui-avatars.com/api/?name=" + (user.name || "User") + "&background=68B2A0&color=fff"} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl z-[100] py-2 animate-in fade-in zoom-in duration-200">
+                  <Link 
+                    to="/settings" 
+                    className="block px-4 py-2 text-[#2C6975] font-semibold hover:bg-[#f0f9f7] transition-colors"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    Settings
+                  </Link>
+                  <hr className="my-1 border-gray-100" />
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-red-500 font-semibold hover:bg-red-50 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            <Link className="no-underline bg-gradient-to-r from-[#68B2A0] to-[#cdfa91] text-white px-[30px] py-[5px] rounded-[10px] text-[16px] font-bold shadow-md transition-all hover:opacity-90" to="/login">Login / Signup</Link>
+            <Link className="no-underline bg-gradient-to-r from-[#68B2A0] to-[#cdfa91] text-white px-[30px] py-[5px] rounded-[10px] text-[16px] font-bold shadow-md transition-all hover:opacity-90" to="/login">
+              Login / Signup
+            </Link>
           )}
         </div>
 
@@ -63,36 +110,16 @@ const NavBar = () => {
         min-[850px]:hidden
       `}>
         
-       
-        <div className="absolute -left-6 -top-4 h-36 w-24 opacity-[0.25] rotate-[-25deg] filter brightness-75 saturate-150 pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute right-[10%] top-6 h-16 w-10 opacity-[0.35] rotate-[45deg] pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute -right-4 top-[35%] h-32 w-20 opacity-[0.22] rotate-[160deg] filter contrast-125 pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute left-[5%] top-[45%] h-12 w-8 opacity-[0.4] rotate-[10deg] filter brightness-50 pointer-events-none"><LeafDecor /></div>
-        
-       
-        <div className="absolute left-[-10px] bottom-[15%] h-28 w-18 opacity-[0.28] rotate-[200deg] pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute right-[15%] bottom-[10%] h-14 w-10 opacity-[0.3] rotate-[-10deg] filter saturate-200 pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute -right-8 -bottom-6 h-48 w-32 opacity-[0.3] rotate-[-15deg] filter brightness-90 pointer-events-none"><LeafDecor /></div>
-        
-        
-        <div className="absolute right-[40%] top-[20%] h-8 w-6 opacity-[0.15] rotate-[80deg] pointer-events-none"><LeafDecor /></div>
+        {/* Leaf Decorations */}
+        <div className="absolute -left-6 -top-4 h-36 w-24 opacity-[0.25] rotate-[-25deg] pointer-events-none"><LeafDecor /></div>
+        <div className="absolute -right-8 -bottom-6 h-48 w-32 opacity-[0.3] rotate-[-15deg] pointer-events-none"><LeafDecor /></div>
 
-        
         <div className={`flex flex-col items-center w-full gap-3 transition-all duration-700 ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           {[
             { name: "Symptoms", to: "/symptoms" },
             { name: "Doctors", to: "/doctors" },
-            { name: "Hospitals", to: "/hospitals" }
+            { name: "Hospitals", to: "/hospitals" },
+            { name: "Settings", to: "/settings" } 
           ].map((item) => (
             <Link 
               key={item.name}
