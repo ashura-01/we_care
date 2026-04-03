@@ -32,6 +32,11 @@ const DoctorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    profileImage: {
+    type: String,
+    // placeholder image
+    default: "https://res.cloudinary.com/donp4617w/image/upload/default_doctor_fwuqrw.png"
+    }
   },
   { timestamps: true }
 );

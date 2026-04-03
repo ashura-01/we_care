@@ -5,7 +5,8 @@ const doctorController = require("../controllers/doctorController");
 const auth = require("../middlewares/authVerification");
 const reviewController = require("../controllers/reviewController");
 const blogController = require("../controllers/blogController");
-const commentController = require("../controllers/commentController")
+const commentController = require("../controllers/commentController");
+const upload = require("../middlewares/uploadMiddleware");
 
 
 // Test route
@@ -21,7 +22,7 @@ router.get("/hospitals", doctorController.getHospitals);
 
 // -------------- AUTH ROUTES -----------------
 router.post("/register", userController.register);
-router.post("/register-doctor", userController.registerDoctor);
+router.post("/register-doctor", upload.single('image'), userController.registerDoctor);
 router.post("/login", userController.login);
 router.get("/logout", auth(), userController.logout);
 
@@ -31,7 +32,7 @@ router.put("/profile", auth(), userController.updateProfile);
 router.delete("/account", auth(), userController.deleteAccount);
 
 // --------- DOCTOR ONLY ROUTES -----------
-router.put("/doctor-profile", auth(), doctorController.updateDoctorProfile);
+router.put("/doctor-profile", auth(), upload.single('image'), doctorController.updateDoctorProfile);
 
 // --------- REVIEW ROUTES ---------------------
 router.get("/reviews/:doctorId", reviewController.getDoctorReviews);
