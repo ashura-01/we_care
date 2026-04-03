@@ -7,7 +7,7 @@ const reviewController = require("../controllers/reviewController");
 const blogController = require("../controllers/blogController");
 const commentController = require("../controllers/commentController");
 const upload = require("../middlewares/uploadMiddleware");
-
+const aiChatController = require("../controllers/aiChatController")
 
 // Test route
 router.get("/", (req, res) => {
@@ -58,5 +58,28 @@ router.post("/create-comment", auth(), commentController.createComment);
 router.get("/all-comments", commentController.getAllComments);
 router.get("/single-comment/:id", auth(), commentController.getSingleComment);
 router.put("/delete-comment/:id", auth(), commentController.deleteComment);
+
+// --------- AI CHAT ROUTE (ADD THIS) -----------
+router.post("/ai-chat", auth(), aiChatController.chatWithAI);
+
+
+
+// ADMIN ROUTES
+const { isAdmin, isSuperAdmin } = require("../middlewares/adminAuth");
+const adminController = require("../controllers/adminController");
+
+// Admin routes
+router.get("/admin/dashboard", isAdmin, adminController.getDashboardStats);
+router.get("/admin/users", isAdmin, adminController.getAllUsers);
+router.get("/admin/users/:id", isAdmin, adminController.getUserById);
+router.put("/admin/users/:id", isAdmin, adminController.updateUser);
+router.delete("/admin/users/:id", isAdmin, adminController.deleteUser);
+router.put("/admin/users/:id/make-admin", isSuperAdmin, adminController.makeAdmin);
+router.get("/admin/doctors", isAdmin, adminController.getAllDoctors);
+router.put("/admin/doctors/:id/verify", isAdmin, adminController.verifyDoctor);
+router.put("/admin/doctors/:id/unverify", isAdmin, adminController.unverifyDoctor);
+router.delete("/admin/doctors/:id", isAdmin, adminController.deleteDoctor);
+
+router.post("/admin/logout", isAdmin, adminController.adminLogout);
 
 module.exports = router;

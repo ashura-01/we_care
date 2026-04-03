@@ -1,18 +1,28 @@
+// utility/tokenHelper.js
 const jwt = require("jsonwebtoken");
 
-exports.EncodeToken = (email, _id) => {
-  let key = process.env.JWT_KEY || "your-secret-key";
-  let expire = process.env.JWT_Expire_Time || "7d";
-  let payload = { email, _id };
 
-  return jwt.sign(payload, key, { expiresIn: expire });
+exports.EncodeToken = (userData) => {
+  return jwt.sign(
+    {
+      _id: userData._id,
+      email: userData.email,
+      role: userData.role || "user"  
+    },
+    process.env.JWT_KEY,
+    { expiresIn: "7d" }
+  );
 };
+
 
 exports.DecodeToken = (token) => {
   try {
-    let key = process.env.JWT_KEY || "your-secret-key";
-    let decode = jwt.verify(token, key);
-    return decode;
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    return {
+      _id: decoded._id,
+      email: decoded.email,
+      role: decoded.role  
+    };
   } catch (error) {
     return null;
   }

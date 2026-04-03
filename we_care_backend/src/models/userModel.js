@@ -2,12 +2,17 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const validBloodGroups = [
-  "A+", "A-", "B+", "B-", 
+  "A+", "A-", "B+", "B-",
   "AB+", "AB-", "O+", "O-"
 ]
 
 const UserSchema = new mongoose.Schema(
   {
+    role: {
+      type: String,
+      enum: ['user', 'admin', 'super_admin'],
+      default: 'user'
+    },
     name: {
       type: String,
       required: true,
@@ -27,13 +32,13 @@ const UserSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum:["Male", "Female"],
+      enum: ["Male", "Female"],
     },
     bloodgroup: {
       type: String,
       required: true,
-      enum:validBloodGroups,
-      uppercase:true,
+      enum: validBloodGroups,
+      uppercase: true,
     },
     phone: {
       type: String,
@@ -54,8 +59,8 @@ UserSchema.pre("save", async function () {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
-  if (this.isModified("bloodgroup")){
-    this.bloodgroup=this.bloodgroup.toUpperCase();
+  if (this.isModified("bloodgroup")) {
+    this.bloodgroup = this.bloodgroup.toUpperCase();
   }
 });
 

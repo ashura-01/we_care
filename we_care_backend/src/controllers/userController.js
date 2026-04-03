@@ -53,7 +53,11 @@ exports.register = async (req, res) => {
       bloodgroup: bloodgroup.toUpperCase(),
     });
 
-    const token = EncodeToken(user.email, user._id);
+    const token = EncodeToken({
+      _id: user._id,
+      email: user.email,
+      role: user.role
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -70,9 +74,9 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        address: user.address,     
-        gender: user.gender,       
-        bloodgroup: user.bloodgroup 
+        address: user.address,
+        gender: user.gender,
+        bloodgroup: user.bloodgroup
       },
       token,
     });
@@ -167,8 +171,11 @@ exports.registerDoctor = async (req, res) => {
       fees: Number(fees),
     });
 
-    const token = EncodeToken(user.email, user._id);
-
+    const token = EncodeToken({
+      _id: user._id,
+      email: user.email,
+      role: user.role
+    });
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -184,9 +191,9 @@ exports.registerDoctor = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        address: user.address,     
-        gender: user.gender,       
-        bloodgroup: user.bloodgroup 
+        address: user.address,
+        gender: user.gender,
+        bloodgroup: user.bloodgroup
       },
       doctor,
       token,
@@ -228,7 +235,11 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = EncodeToken(user.email, user._id);
+    const token = EncodeToken({
+      _id: user._id,
+      email: user.email,
+      role: user.role
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -249,9 +260,9 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        address: user.address,    
-        gender: user.gender,      
-        bloodgroup: user.bloodgroup, 
+        address: user.address,
+        gender: user.gender,
+        bloodgroup: user.bloodgroup,
         isDoctor: doctor ? true : false,
       },
       doctor: doctor || null,
