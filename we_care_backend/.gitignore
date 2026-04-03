@@ -4,3 +4,6 @@
 .vscode
 testing.txt
 test.txt
+package-lock.json
+package.json
+DoctorsList.jsx
