@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { authController } from '../api/authController';
+import api from '../api/api';
 
 export const AuthContext = createContext();
 
@@ -9,27 +10,65 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    if (authController.isAuthenticated()) {
-      const currentUser = authController.getCurrentUser();
-      
+    const checkAuth = async () => {
+      try {
+        const response = await api.get('/profile');
 
-      const displayName = currentUser.name || currentUser.email.split('@')[0];
-      setUser({ ...currentUser, name: displayName });
-    }
-    setLoading(false);
+        if (response.data?.success && response.data?.user) {
+          const userData = response.data.user;
+
+          setUser({
+            ...userData,
+            role:
+              userData?.role ||
+              localStorage.getItem('userRole') ||
+              (userData?.isDoctor ? 'doctor' : 'patient'),
+          });
+        } else {
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userId');
+          setUser(null);
+        }
+      } catch (error) {
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userId');
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+
+    const interval = setInterval(() => {
+      checkAuth();
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
 
-
   const loginUser = (userData) => {
-    const displayName = userData.name || userData.email.split('@')[0];
-    setUser({ ...userData, name: displayName });
+    const safeUser = {
+      ...userData,
+      role:
+        userData?.role ||
+        localStorage.getItem('userRole') ||
+        (userData?.isDoctor ? 'doctor' : 'patient'),
+    };
+
+    setUser(safeUser);
   };
 
-
   const logoutUser = async () => {
-    await authController.logout();
+    try {
+      await authController.logout();
+    } catch (e) {
+      // ignore
+    }
+
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userId');
     setUser(null);
   };
 

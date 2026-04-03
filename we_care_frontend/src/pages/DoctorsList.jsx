@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LeafDecor from "../components/LeafDecor";
 import GlassCard from "../components/GlassCard";
-import DoctorCard from "../components/DoctorCard";
+//import DoctorCard from "../components/DoctorCard";
 
 const DoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);

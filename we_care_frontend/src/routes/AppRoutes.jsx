@@ -8,8 +8,9 @@ import AdminRoutes from "./AdminRoutes";
 import SignupChoice from "../pages/SignupChoice";
 import PatientSignup from "../pages/PatientSignup";
 import DoctorSignup from "../pages/DoctorSignup";
-import Login from "../pages/Login"; // Import your actual login component
+import Login from "../pages/Login";
 import DoctorProfile from "../pages/DoctorProfile";
+import Settings from "../pages/Settings";
 import { ProtectedRoute } from "./ProtectedRoutes";
 
 const AppRoutes = () => {
@@ -61,6 +62,12 @@ const AppRoutes = () => {
       <Route path="/hospitals" element={
         <ProtectedRoute>
           <Hospitals />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <Settings />
         </ProtectedRoute>
       } />
 
