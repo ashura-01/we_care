@@ -23,9 +23,9 @@ const Home = () => {
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* ── Hero Section ── */}
       <section className="relative overflow-hidden bg-white pb-[40px] max-[480px]:pb-[28px]">
-        {/* blobs */}
+        {/* Background Blobs */}
         <div className="pointer-events-none absolute left-[-20px] top-[15px] z-[1] h-[150px] w-[150px] rounded-full bg-[#94d82d] opacity-[0.92] blur-[28px] max-[480px]:h-[100px] max-[480px]:w-[100px]" />
         <div className="pointer-events-none absolute right-[-35px] top-[40px] z-[1] h-[150px] w-[150px] rounded-full bg-[#8fd629] opacity-[0.88] blur-[35px] max-[480px]:h-[100px] max-[480px]:w-[100px]" />
         <div className="pointer-events-none absolute left-[85px] top-[300px] z-[1] h-[150px] w-[300px] rounded-[50px] bg-[#4f93a7] opacity-[0.75] blur-[18px] max-[480px]:top-[200px] max-[480px]:left-0 max-[480px]:w-full max-[480px]:h-[100px]" />
@@ -37,18 +37,9 @@ const Home = () => {
 
         <div className="relative z-[3] box-border px-[clamp(16px,3vw,34px)] pt-[38px] max-[760px]:px-[16px] max-[480px]:pt-[20px]">
           <div className="flex w-full items-start justify-start gap-[clamp(40px,16vw,260px)] max-[900px]:gap-[28px] max-[760px]:flex-col-reverse max-[760px]:items-center max-[760px]:gap-0">
-            {/* ① headline + cta */}
+            
             <div className="ml-[clamp(8px,2.5vw,40px)] flex min-w-0 flex-[0_1_690px] flex-col max-[900px]:ml-[clamp(4px,1.5vw,16px)] max-[760px]:ml-0 max-[760px]:w-full max-[760px]:flex-none">
-              <GlassCard className="
-                left-[clamp(20px,8vw,150px)] w-[clamp(360px,52vw,640px)] max-w-full
-                rounded-[clamp(26px,3vw,42px)]
-                px-[clamp(18px,2.2vw,30px)] py-[clamp(20px,2.4vw,34px)]
-                max-[1200px]:w-[clamp(500px,58vw,640px)]
-                max-[1100px]:left-[clamp(12px,5vw,90px)] max-[1100px]:w-[clamp(340px,50vw,560px)]
-                max-[900px]:left-[clamp(8px,3vw,40px)] max-[900px]:w-[clamp(320px,56vw,500px)]
-                max-[760px]:left-0 max-[760px]:w-full max-[760px]:min-w-0
-                backdrop-blur-[12px] bg-white/10
-              ">
+              <GlassCard className="left-[clamp(20px,8vw,150px)] w-[clamp(360px,52vw,640px)] max-w-full rounded-[clamp(26px,3vw,42px)] px-[clamp(18px,2.2vw,30px)] py-[clamp(20px,2.4vw,34px)] max-[1200px]:w-[clamp(500px,58vw,640px)] max-[1100px]:left-[clamp(12px,5vw,90px)] max-[1100px]:w-[clamp(340px,50vw,560px)] max-[900px]:left-[clamp(8px,3vw,40px)] max-[900px]:w-[clamp(320px,56vw,500px)] max-[760px]:left-0 max-[760px]:w-full max-[760px]:min-w-0 backdrop-blur-[12px] bg-white/10">
                 <h1 className="relative z-[4] m-0 text-[34px] font-bold leading-[1.45] max-[760px]:text-[clamp(24px,6vw,34px)]">
                   <span className="ml-[18px] block text-[#00887f] max-[760px]:ml-0">Right doctor.</span>
                   <span className="ml-[116px] block text-[#0a6678] max-[1100px]:ml-[clamp(20px,5vw,80px)] max-[900px]:ml-[clamp(14px,4vw,48px)] max-[760px]:ml-0">Right place.</span>
@@ -57,37 +48,16 @@ const Home = () => {
               </GlassCard>
 
               <div className="mt-[14px] ml-[clamp(8px,2vw,30px)] max-[760px]:ml-0 max-[760px]:text-center">
-                <p className="
-                  ml-[clamp(24px,8vw,150px)] w-[clamp(220px,28vw,315px)] max-w-full
-                  text-[clamp(13px,1.2vw,17px)] font-bold leading-[1.25] text-[#111111]
-                  max-[1100px]:ml-[clamp(18px,6vw,90px)]
-                  max-[900px]:ml-[clamp(10px,4vw,50px)]
-                  max-[760px]:ml-0 max-[760px]:w-full
-                ">
+                <p className="ml-[clamp(24px,8vw,150px)] w-[clamp(220px,28vw,315px)] max-w-full text-[clamp(13px,1.2vw,17px)] font-bold leading-[1.25] text-[#111111] max-[1100px]:ml-[clamp(18px,6vw,90px)] max-[900px]:ml-[clamp(10px,4vw,50px)] max-[760px]:ml-0 max-[760px]:w-full">
                   Smart symptom insights with trusted doctors, locations, and appointment details.
                 </p>
-                <PillButton className="
-                  mt-[10px] ml-[clamp(24px,8vw,150px)] px-[22px] py-[11px]
-                  max-[1100px]:ml-[clamp(18px,6vw,90px)]
-                  max-[900px]:ml-[clamp(10px,4vw,50px)]
-                  max-[760px]:ml-0
-                  max-[480px]:w-full max-[480px]:text-center
-                ">
+                <PillButton className="mt-[10px] ml-[clamp(24px,8vw,150px)] px-[22px] py-[11px] max-[1100px]:ml-[clamp(18px,6vw,90px)] max-[900px]:ml-[clamp(10px,4vw,50px)] max-[760px]:ml-0 max-[480px]:w-full max-[480px]:text-center">
                   CHECK SYMPTOMS
                 </PillButton>
               </div>
             </div>
 
-            {/* ② hero image */}
-            <div className="
-              relative z-[3] flex shrink-0 items-center justify-center
-              min-[761px]:-translate-y-[70px]
-              h-[380px] w-[540px]
-              max-[1100px]:h-[320px] max-[1100px]:w-[460px]
-              max-[900px]:h-[280px] max-[900px]:w-[380px]
-              max-[760px]:translate-y-0 max-[760px]:h-auto max-[760px]:max-h-[220px] max-[760px]:w-full max-[760px]:mb-[12px]
-              max-[480px]:max-h-[180px]
-            ">
+            <div className="relative z-[3] flex shrink-0 items-center justify-center min-[761px]:-translate-y-[70px] h-[380px] w-[540px] max-[1100px]:h-[320px] max-[1100px]:w-[460px] max-[900px]:h-[280px] max-[900px]:w-[380px] max-[760px]:translate-y-0 max-[760px]:h-auto max-[760px]:max-h-[220px] max-[760px]:w-full max-[760px]:mb-[12px] max-[480px]:max-h-[180px]">
               <img
                 src={mainDoctorsIcon}
                 alt="Doctors"
@@ -96,15 +66,22 @@ const Home = () => {
             </div>
           </div>
 
-          {/* stats cards */}
+          {/* ── Stats Cards ── */}
           <div className="mt-[35px] flex flex-wrap justify-center gap-[20px] max-[480px]:mt-[20px]">
             {stats.map((item, index) => (
               <GlassCard
                 key={index}
-                className="flex h-[200px] w-[300px] cursor-pointer flex-col items-center justify-center gap-[8px] rounded-[35px] border border-white/30 bg-white/10 backdrop-blur-[12px] shadow-[0_15px_25px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_18px_40px_rgba(0,0,0,0.15)] max-[760px]:h-[160px] max-[760px]:w-[45%] max-[480px]:w-[46%]"
+                className="flex h-[200px] w-[300px] cursor-pointer items-center justify-center rounded-[35px] border border-white/30 bg-white/10 backdrop-blur-[12px] shadow-[0_15px_25px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_18px_40px_rgba(0,0,0,0.15)] max-[760px]:h-[160px] max-[760px]:w-[45%] max-[480px]:w-[46%]"
               >
-                <h2 className="relative z-[2] m-0 text-[32px] font-extrabold leading-none text-[#0d404b] max-[480px]:text-[24px]">{item.number}</h2>
-                <p className="relative z-[2] m-0 bg-[linear-gradient(to_right,#0a6678,#00887f)] bg-clip-text text-center text-[24px] font-bold leading-[1.3] text-transparent max-[480px]:text-[16px]">{item.label}</p>
+                {/* Internal Wrapper to fix centering without breaking global GlassCard */}
+                <div className="flex flex-col items-center justify-center text-center w-full h-full gap-[8px]">
+                  <h2 className="relative z-[2] m-0 text-[32px] font-extrabold leading-none text-[#0d404b] max-[480px]:text-[24px]">
+                    {item.number}
+                  </h2>
+                  <p className="relative z-[2] m-0 bg-[linear-gradient(to_right,#0a6678,#00887f)] bg-clip-text text-[24px] font-bold leading-[1.3] text-transparent max-[480px]:text-[16px]">
+                    {item.label}
+                  </p>
+                </div>
               </GlassCard>
             ))}
           </div>
@@ -113,7 +90,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Feature sections ── */}
+      {/* ── Feature Sections ── */}
       {[
         {
           reverse: false,
@@ -148,23 +125,17 @@ const Home = () => {
       ].map(({ reverse, icon, alt, title, desc, btn, to, iconStyle }) => (
         <section
           key={title}
-          className={`
-            relative flex items-center justify-center gap-[42px] overflow-hidden
-            px-[48px] pb-[38px] pt-[48px]
-            ${reverse
+          className={`relative flex items-center justify-center gap-[42px] overflow-hidden px-[48px] pb-[38px] pt-[48px] ${
+            reverse
               ? "flex-row-reverse bg-[linear-gradient(to_left,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)]"
-              : "bg-[linear-gradient(122.176deg,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)]"}
-            max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-[20px]
-            max-[900px]:px-[24px] max-[900px]:pb-[24px] max-[900px]:pt-[34px]
-            max-[480px]:px-[16px] max-[480px]:pb-[20px] max-[480px]:pt-[28px]
-          `}
+              : "bg-[linear-gradient(122.176deg,rgba(224,236,222,0.22)_30.173%,rgba(104,178,160,0.45)_100%)]"
+          } max-[900px]:flex-col max-[900px]:items-start max-[900px]:gap-[20px] max-[900px]:px-[24px] max-[900px]:pb-[24px] max-[900px]:pt-[34px] max-[480px]:px-[16px] max-[480px]:pb-[20px] max-[480px]:pt-[28px]`}
         >
           <div className="flex h-[220px] w-[220px] shrink-0 items-center justify-center max-[900px]:h-[140px] max-[900px]:w-[140px] max-[480px]:h-[100px] max-[480px]:w-[100px]">
             <img src={icon} alt={alt} className={`h-[180px] w-[180px] opacity-90 max-[900px]:h-[120px] max-[900px]:w-[120px] max-[480px]:h-[85px] max-[480px]:w-[85px] ${iconStyle}`} />
           </div>
 
           <div className={`relative w-full max-w-[760px] ${reverse ? "mr-[50px] max-[900px]:mr-0" : "ml-[70px] max-[900px]:ml-0"} max-[480px]:ml-0 max-[480px]:mr-0`}>
-            {/* Leaves sit behind card (z-0) */}
             <div className={`absolute ${reverse ? "left-[18px] max-[900px]:left-auto max-[900px]:right-[18px]" : "right-[18px]"} top-[-14px] z-[0] h-[170px] w-[110px] opacity-[0.55] max-[480px]:hidden`}>
               <LeafDecor />
             </div>
@@ -172,7 +143,6 @@ const Home = () => {
               <LeafDecor />
             </div>
             
-            {/* Card sits on top (relative z-[1]) with high blur */}
             <GlassCard className="relative z-[1] w-full max-w-[720px] rounded-[50px] border border-white/30 bg-white/10 px-[34px] py-[34px] shadow-[0_15px_25px_rgba(0,0,0,0.15)] backdrop-blur-[12px] max-[480px]:rounded-[28px] max-[480px]:px-[20px] max-[480px]:py-[22px]">
               <h2 className="mb-[14px] max-w-[420px] text-[32px] font-bold leading-[1.12] text-[#1d5f71] max-[900px]:text-[28px] max-[480px]:text-[22px]">
                 {title}
