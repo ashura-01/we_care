@@ -5,6 +5,10 @@ import DoctorList from "../pages/DoctorsList";
 import Symptoms from "../pages/Symptoms";
 import Hospitals from "../pages/Hospitals";
 import AdminRoutes from "./AdminRoutes";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import AdminDoctorProfile from "../pages/admin/AdminDoctorProfile";
+import AdminPatientProfile from "../pages/admin/AdminPatientProfile";
+import AdminHospitalProfile from "../pages/admin/AdminHospitalProfile";
 import SignupChoice from "../pages/SignupChoice";
 import PatientSignup from "../pages/PatientSignup";
 import DoctorSignup from "../pages/DoctorSignup";
@@ -74,6 +78,41 @@ const AppRoutes = () => {
       <Route path="/admin/*" element={
         <ProtectedRoute>
           <AdminRoutes />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/doctor/:id" element={
+        <ProtectedRoute>
+          <DoctorProfile />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/doctors/:id" element={
+       <ProtectedRoute>
+       <AdminDoctorProfile />
+      </ProtectedRoute>
+      } />
+
+      <Route path="/admin/patients/:id" element={
+        <ProtectedRoute>
+          <AdminPatientProfile />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/hospitals/:id" element={
+        <ProtectedRoute>
+          <AdminHospitalProfile />
+        </ProtectedRoute>
+      } />
+
+
+      // Without login to admin
+      <Route path="/admin/*" element={<AdminDashboard />} />
+      
+      // logged in to admin
+      <Route path="/admin/*" element={
+        <ProtectedRoute>
+          <AdminDashboard />
         </ProtectedRoute>
       } />
 
